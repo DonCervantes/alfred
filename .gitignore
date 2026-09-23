@@ -1,0 +1,22 @@
+# Dependencies / build
+node_modules/
+dist/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+
+# Rust / Stellar
+target/
+*.wasm
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Secrets
+*.pem
+*.key
