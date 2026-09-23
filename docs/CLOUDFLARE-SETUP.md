@@ -1,86 +1,71 @@
 # ALFRED — Cloudflare Setup (ALF-004 / ALF-011)
 
-**Status:** Config ready in repo · **Auth:** run `wrangler login` once on your machine
+**Status:** D1 `alfred-db` created · schema applied · Worker `alfred` exists in account  
+**Pending:** enable R2 (dashboard) · fix Git deploy commands · put secrets · Pages for web
 
 ---
 
-## 1. Login (you)
+## What ALFRED needs in Cloudflare (plain language)
 
-From the repo root (uses the API package’s wrangler):
+Think of three pieces:
 
-```powershell
-cd apps/api
-pnpm exec wrangler login
-pnpm exec wrangler whoami
-```
+| Piece | What it is | Why |
+|-------|------------|-----|
+| **Worker (`alfred`)** | The API in the cloud | Login session, activate wallet, later DID/vault endpoints |
+| **D1 (`alfred-db`)** | A small SQL database | Users, credential metadata, share links |
+| **Pages (`alfred-web`)** | The website | The React UI people open in the browser |
+| **R2** (later) | File storage | Encrypted credential blobs (optional until issue flow) |
 
-A browser window opens; approve Cloudflare access. Confirm the account email appears in `whoami`.
-
----
-
-## 2. Create remote resources
-
-```powershell
-cd apps/api
-
-# D1 database
-pnpm exec wrangler d1 create alfred-db
-
-# R2 bucket (encrypted VC payloads later)
-pnpm exec wrangler r2 bucket create alfred-vc-blobs
-```
-
-Copy the `database_id` printed by `d1 create` into `wrangler.toml` → `[[d1_databases]].database_id`.
-
-Apply schema:
-
-```powershell
-# Local (Miniflare)
-pnpm exec wrangler d1 migrations apply alfred-db --local
-
-# Remote (after database_id is set)
-pnpm exec wrangler d1 migrations apply alfred-db --remote
-```
+The dashboard form you saw wires **GitHub → Worker**. That is only the API. The pretty UI is a separate Pages project.
 
 ---
 
-## 3. Deploy API (Worker)
+## Done via MCP (already)
+
+- Authenticated Cloudflare MCP
+- Created D1: **`alfred-db`** (`18211217-bbe1-42e3-aaa2-6bdbc110e74e`)
+- Applied tables: `users`, `credentials_meta`, `presentation_links`
+- Updated `apps/api/wrangler.toml` (`name = "alfred"` + real `database_id`)
+- R2 create blocked until you enable R2 in the dashboard (free tier is fine)
+
+---
+
+## Your remaining clicks (minimal)
+
+### A) Finish the Worker deploy form (or cancel and redeploy)
+
+If that “Set up your application” screen is still open:
+
+| Field | Value |
+|--------|--------|
+| Project name | `alfred` |
+| Build command | `pnpm install` |
+| Deploy command | `pnpm --filter @alfred/api run deploy` |
+
+Then **Deploy**. If it already failed, open the Worker → **Settings / Builds** and fix those commands, then **Retry**.
+
+### B) Enable R2 (1 minute)
+
+Dashboard → **R2** → enable / purchase free plan. Tell me when it’s on and I’ll create the bucket via MCP.
+
+### C) Secrets (after Worker is live)
 
 ```powershell
-cd apps/api
+cd C:\Users\cruzc\Projects\alfred\apps\api
 pnpm exec wrangler secret put POLLAR_SECRET_KEY
 pnpm exec wrangler secret put SESSION_SECRET
-pnpm run deploy
 ```
 
-Note the `*.workers.dev` URL. Add it to Pollar **Allowed redirect / API** origins when you wire production auth.
+### D) Web UI (Pages) — later
+
+We do this after the API URL works: create Pages project `alfred-web` pointing at `apps/web`.
 
 ---
 
-## 4. Deploy Web (Pages)
+## Check health
 
-```powershell
-cd apps/web
-pnpm run build
-pnpm exec wrangler pages project create alfred-web
-pnpm exec wrangler pages deploy dist --project-name=alfred-web
-```
+When deploy succeeds, open:
 
-Or connect the GitHub repo `DonCervantes/alfred` in the Cloudflare dashboard (build: `pnpm install && pnpm --filter @alfred/web build`, output `apps/web/dist`).
+`https://alfred.<tu-cuenta>.workers.dev/api/health`
 
-Set Pages env: `VITE_POLLAR_PUBLISHABLE_KEY`, `VITE_API_URL` (Worker URL).
-
----
-
-## 5. Checklist
-
-| Step | Done |
-|------|------|
-| `wrangler login` | ☐ |
-| D1 `alfred-db` + migrations | ☐ |
-| R2 `alfred-vc-blobs` | ☐ |
-| Worker secrets + deploy | ☐ |
-| Pages project + deploy | ☐ |
-| Pollar domains updated for `*.pages.dev` / Worker | ☐ |
-
-After this: **ALF-031** session cookies on the Worker.
+You should see `"ok": true` and `"db": true`.

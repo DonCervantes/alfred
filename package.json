@@ -10,7 +10,8 @@
     "dev:web": "pnpm --filter @alfred/web dev",
     "dev:api": "pnpm --filter @alfred/api dev",
     "contracts:build": "powershell -File contracts/scripts/build.ps1",
-    "contracts:test": "cd contracts && cargo test --workspace"
+    "contracts:test": "cd contracts && cargo test --workspace",
+    "deploy:api": "pnpm --filter @alfred/api run deploy"
   },
   "devDependencies": {
     "turbo": "^2.5.4",
