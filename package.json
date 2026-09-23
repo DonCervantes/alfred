@@ -8,7 +8,9 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "dev:web": "pnpm --filter @alfred/web dev",
-    "dev:api": "pnpm --filter @alfred/api dev"
+    "dev:api": "pnpm --filter @alfred/api dev",
+    "contracts:build": "powershell -File contracts/scripts/build.ps1",
+    "contracts:test": "cd contracts && cargo test --workspace"
   },
   "devDependencies": {
     "turbo": "^2.5.4",
