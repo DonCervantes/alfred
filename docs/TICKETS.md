@@ -57,12 +57,12 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 |----|--------|---|--------|---------|
 | **ALF-020** | Workspace Rust: `alfred-did-registry` scaffold + tests smoke | P0 | Done | ALF-003, ALF-010 |
 | **ALF-021** | Implement DID register/update/get/deactivate | P0 | Done | ALF-020 |
-| **ALF-022** | Workspace: `alfred-vc-vault` issue/revoke/get/list/verify | P0 | Blocked | ALF-020 |
-| **ALF-023** | Workspace: `alfred-vc-vault-factory` deploy/is_vault + **fee USDC** | P0 | Blocked | ALF-022 |
-| **ALF-023b** | Config testnet: USDC trustline, `set_fee_*`, quote en issue flow | P0 | Blocked | ALF-023, ALF-025 |
-| **ALF-024** | Scripts `build` + `deploy` vía Stellar CLI | P0 | Blocked | ALF-021, ALF-023 |
-| **ALF-025** | Deploy testnet + documentar IDs en `docs/deployments/testnet.md` | P0 | Partial (DID) | ALF-003, ALF-024 |
-| **ALF-026** | Generar TypeScript bindings → `packages/stellar` | P0 | Partial (DID) | ALF-025 |
+| **ALF-022** | Workspace: `alfred-vc-vault` issue/revoke/get/list/verify | P0 | Done | ALF-020 |
+| **ALF-023** | Workspace: `alfred-vc-vault-factory` deploy/is_vault + **fee USDC** | P0 | Done (fee=0) | ALF-022 |
+| **ALF-023b** | Config testnet: USDC trustline, `set_fee_*`, quote en issue flow | P0 | Todo | ALF-023, ALF-025 |
+| **ALF-024** | Scripts `build` + `deploy` vía Stellar CLI | P0 | Todo | ALF-021, ALF-023 |
+| **ALF-025** | Deploy testnet + documentar IDs en `docs/deployments/testnet.md` | P0 | Done | ALF-003, ALF-024 |
+| **ALF-026** | Generar TypeScript bindings → `packages/stellar` | P0 | Done | ALF-025 |
 
 ---
 

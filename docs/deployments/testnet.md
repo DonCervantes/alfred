@@ -8,14 +8,19 @@ Contract IDs are recorded here after `stellar contract deploy` (ALF-025).
 |----------|---------|----------------|----------|
 | `alfred-did-registry` | 0.0.0 | `CCLOO56UFL7623QRZSV5YZQLAPQ65RMMEACT6CLKF4HWNFW3QTLF2M3Q` | 2026-09-23 |
 | | | WASM `42f55ea98fda88bff5c5b147a42d838e7f711b413172491eaf863835221e4718` | |
-| `alfred-vc-vault-factory` | — | TBD | — |
-| `alfred-vc-vault` (template) | — | TBD | — |
+| `alfred-vc-vault` (template WASM) | 0.0.0 | WASM `cad67800c8e178ae1442226c1b2848007fea9c1df6e8d3a30b006e41c7b78bfc` | 2026-09-23 |
+| `alfred-vc-vault-factory` | 0.0.0 | `CAMHSVEVALQ4UORC6WXBX3L7I4YGFL7FTBBML4DJZCN637I4NXJLIZIY` | 2026-09-23 |
+| | | WASM `18b23d5c185cb37794a3e97bef8243e1465e79ea58a7de6356beedfcad47dc72` | |
+| Sample vault (factory smoke) | — | `CDP4M3WY6KB5QWJHG3UGCCWDNJZGDQE47P25FMQKKQHMXNSBYDA6K44G` | 2026-09-23 |
 
 Network passphrase: `Test SDF Network ; September 2015`  
 Deployer / admin: `alfred-deployer` → `GBFT6GJIARFHVGP2MUSFFFZHV62IED6KPNX7H4ANJBW5QS2NE4JP5O4J`
 
+Issue fee: **disabled** (`quote_issue_fee = 0`). Configure later with `set_fee` + testnet USDC (ALF-023b).
+
 ### Links
 
-- Contract: https://stellar.expert/explorer/testnet/contract/CCLOO56UFL7623QRZSV5YZQLAPQ65RMMEACT6CLKF4HWNFW3QTLF2M3Q
-- Lab: https://lab.stellar.org/r/testnet/contract/CCLOO56UFL7623QRZSV5YZQLAPQ65RMMEACT6CLKF4HWNFW3QTLF2M3Q
-- Deploy tx: https://stellar.expert/explorer/testnet/tx/071597f5fc835516e9e018a1d0af803c96bb33211a762edd45d6441e5196d387
+- DID registry: https://stellar.expert/explorer/testnet/contract/CCLOO56UFL7623QRZSV5YZQLAPQ65RMMEACT6CLKF4HWNFW3QTLF2M3Q
+- Vault factory: https://stellar.expert/explorer/testnet/contract/CAMHSVEVALQ4UORC6WXBX3L7I4YGFL7FTBBML4DJZCN637I4NXJLIZIY
+- Sample vault: https://stellar.expert/explorer/testnet/contract/CDP4M3WY6KB5QWJHG3UGCCWDNJZGDQE47P25FMQKKQHMXNSBYDA6K44G
+- Lab (factory): https://lab.stellar.org/r/testnet/contract/CAMHSVEVALQ4UORC6WXBX3L7I4YGFL7FTBBML4DJZCN637I4NXJLIZIY
