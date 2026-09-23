@@ -70,7 +70,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
-| **ALF-030** | Integrar `@pollar/react` Sign-in en `/signin` | P0 | Blocked | ALF-002, ALF-012 |
+| **ALF-030** | Integrar `@pollar/react` Sign-in en Continuar / landing | P0 | Done | ALF-002, ALF-012 |
 | **ALF-031** | `POST /api/auth/session` + cookies HttpOnly | P0 | Blocked | ALF-011, ALF-030 |
 | **ALF-032** | `GET /api/me` (perfil, did, vault) | P0 | Blocked | ALF-031 |
 | **ALF-033** | Endpoints DID register + Vault deploy (preparar XDR) | P0 | Blocked | ALF-026, ALF-032 |

@@ -1,8 +1,94 @@
+import { usePollar } from "@pollar/react";
+import type { ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
 
-export function HomePage() {
-  const { locale, setLocale, tr } = useLocale();
+function truncateAddress(address: string) {
+  if (address.length < 12) return address;
+  return `${address.slice(0, 4)}…${address.slice(-4)}`;
+}
 
+export function HomePage() {
+  const hasPollarKey = Boolean(import.meta.env.VITE_POLLAR_PUBLISHABLE_KEY);
+
+  if (!hasPollarKey) {
+    return <HomeWithoutPollar />;
+  }
+
+  return <HomeWithPollar />;
+}
+
+function HomeWithoutPollar() {
+  const { locale, setLocale, tr } = useLocale();
+  return (
+    <Shell locale={locale} setLocale={setLocale}>
+      <Hero tr={tr}>
+        <p className="max-w-sm text-sm text-[var(--text-secondary)]">
+          {tr("auth.missingKey")}
+        </p>
+      </Hero>
+    </Shell>
+  );
+}
+
+function HomeWithPollar() {
+  const { locale, setLocale, tr } = useLocale();
+  const { isAuthenticated, wallet, openLoginModal, logout } = usePollar();
+
+  return (
+    <Shell locale={locale} setLocale={setLocale}>
+      <Hero tr={tr}>
+        {isAuthenticated && wallet ? (
+          <div className="flex w-full max-w-md flex-col items-center gap-4">
+            <p className="text-sm font-medium text-[var(--success)]">
+              {tr("auth.signedIn")}
+            </p>
+            <div className="w-full rounded-[var(--radius)] bg-[var(--surface)] px-5 py-4 text-left shadow-sm ring-1 ring-black/5">
+              <p className="text-xs tracking-wide text-[var(--text-secondary)] uppercase">
+                {tr("auth.wallet")}
+              </p>
+              <p className="mt-1 font-mono text-sm text-[var(--text)]">
+                {truncateAddress(wallet.address)}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                {tr("auth.deferred")}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => logout()}
+              className="text-sm text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text)] hover:underline"
+            >
+              {tr("cta.signOut")}
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => openLoginModal()}
+              className="rounded-[var(--radius)] bg-[var(--accent)] px-7 py-3.5 text-base font-medium text-white shadow-sm transition hover:brightness-110 active:scale-[0.98]"
+            >
+              {tr("cta.continue")}
+            </button>
+            <p className="text-sm text-[var(--text-secondary)]">
+              Pollar · Cloudflare · Soroban
+            </p>
+          </div>
+        )}
+      </Hero>
+    </Shell>
+  );
+}
+
+function Shell({
+  children,
+  locale,
+  setLocale,
+}: {
+  children: ReactNode;
+  locale: "en" | "es";
+  setLocale: (locale: "en" | "es") => void;
+}) {
   return (
     <main className="relative min-h-screen overflow-hidden">
       <div
@@ -39,31 +125,33 @@ export function HomePage() {
         </button>
       </header>
 
-      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] max-w-3xl flex-col items-center justify-center px-6 pb-24 text-center sm:px-10">
-        <p className="mb-6 text-[11px] font-medium tracking-[0.22em] text-[var(--text-secondary)] uppercase">
-          Stellar · Testnet
-        </p>
-        <h1 className="text-6xl font-semibold tracking-tight text-[var(--text)] sm:text-7xl md:text-8xl">
-          {tr("brand.name")}
-        </h1>
-        <p className="mt-6 max-w-xl text-2xl font-medium tracking-tight text-[var(--text)] sm:text-3xl">
-          {tr("brand.tagline")}
-        </p>
-        <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
-          {tr("home.supporting")}
-        </p>
-        <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row">
-          <button
-            type="button"
-            className="rounded-[var(--radius)] bg-[var(--accent)] px-7 py-3.5 text-base font-medium text-white shadow-sm transition hover:brightness-110 active:scale-[0.98]"
-          >
-            {tr("cta.continue")}
-          </button>
-          <p className="text-sm text-[var(--text-secondary)]">
-            Pollar · Cloudflare · Soroban
-          </p>
-        </div>
-      </section>
+      {children}
     </main>
+  );
+}
+
+function Hero({
+  tr,
+  children,
+}: {
+  tr: (key: Parameters<ReturnType<typeof useLocale>["tr"]>[0]) => string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] max-w-3xl flex-col items-center justify-center px-6 pb-24 text-center sm:px-10">
+      <p className="mb-6 text-[11px] font-medium tracking-[0.22em] text-[var(--text-secondary)] uppercase">
+        Stellar · Testnet
+      </p>
+      <h1 className="text-6xl font-semibold tracking-tight text-[var(--text)] sm:text-7xl md:text-8xl">
+        {tr("brand.name")}
+      </h1>
+      <p className="mt-6 max-w-xl text-2xl font-medium tracking-tight text-[var(--text)] sm:text-3xl">
+        {tr("brand.tagline")}
+      </p>
+      <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--text-secondary)] sm:text-lg">
+        {tr("home.supporting")}
+      </p>
+      <div className="mt-10 flex w-full flex-col items-center">{children}</div>
+    </section>
   );
 }
