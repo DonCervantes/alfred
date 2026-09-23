@@ -37,4 +37,6 @@ export const es = {
     "Pollar no reconoce esta billetera. Cierra sesión, entra otra vez y activa.",
   "auth.treasuryEmpty":
     "El treasury de Pollar no tiene XLM. Fondea Account Funding en el dashboard (Treasury).",
+  "auth.walletCreationFailed":
+    "Pollar no pudo crear/fondear la billetera en Stellar. Revisa Treasury → Account Funding (XLM testnet) y reintenta. También puedes fondear en Users → Wallets.",
 } as const;

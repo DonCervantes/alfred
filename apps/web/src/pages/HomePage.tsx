@@ -84,6 +84,8 @@ function HomeWithPollar() {
           setActivateError(tr("auth.missingSecret"));
         } else if (data.code === "WALLET_NOT_FOUND") {
           setActivateError(tr("auth.walletNotFound"));
+        } else if (data.code === "WALLET_CREATION_FAILED" || data.code === "FUND_XLM_FAILED") {
+          setActivateError(tr("auth.walletCreationFailed"));
         } else if (
           data.code === "INSUFFICIENT_FUNDS" ||
           res.status === 402 ||

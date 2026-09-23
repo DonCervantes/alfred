@@ -36,4 +36,6 @@ export const en = {
     "Pollar does not know this wallet. Sign out, sign in again, then activate.",
   "auth.treasuryEmpty":
     "Pollar treasury has no XLM. Top up Account Funding in the Pollar dashboard (Treasury).",
+  "auth.walletCreationFailed":
+    "Pollar could not create/fund the wallet on Stellar. Check Treasury → Account Funding has testnet XLM, then retry. You can also Fund the wallet under Users → Wallets.",
 } as const;
