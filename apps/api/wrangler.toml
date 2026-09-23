@@ -1,0 +1,6 @@
+name = "alfred-api"
+main = "src/index.ts"
+compatibility_date = "2025-10-15"
+
+[vars]
+STELLAR_NETWORK = "testnet"

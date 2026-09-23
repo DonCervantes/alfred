@@ -42,10 +42,10 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
-| **ALF-010** | Scaffold monorepo (`apps/web`, `apps/api`, `contracts`, `packages`) | P0 | Blocked | ALF-001 |
-| **ALF-011** | Config Cloudflare Worker (Hono) + D1 schema v0 | P0 | Blocked | ALF-004, ALF-010 |
-| **ALF-012** | Config Pages/Vite React + Tailwind v4 + tokens Apple-like | P0 | Blocked | ALF-010 |
-| **ALF-013** | i18n ES/EN (diccionarios + switcher) | P0 | Blocked | ALF-012 |
+| **ALF-010** | Scaffold monorepo (`apps/web`, `apps/api`, `contracts`, `packages`) | P0 | Done | ALF-001 |
+| **ALF-011** | Config Cloudflare Worker (Hono) + D1 schema v0 | P0 | Todo | ALF-004, ALF-010 |
+| **ALF-012** | Config Pages/Vite React + Tailwind v4 + tokens Apple-like | P0 | Done | ALF-010 |
+| **ALF-013** | i18n ES/EN (diccionarios + switcher) | P0 | Done | ALF-012 |
 | **ALF-014** | `.env.example` + Secrets map (Pollar, Session, Stellar IDs) | P0 | Blocked | ALF-002, ALF-010 |
 | **ALF-015** | CI GitHub Actions: lint + typecheck (skeleton) | P1 | Blocked | ALF-010 |
 
