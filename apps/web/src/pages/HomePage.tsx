@@ -70,20 +70,26 @@ function HomeWithPollar() {
         body: JSON.stringify({ publicKey: wallet.address }),
       });
 
-      if (!res.ok && res.status === 0) {
-        setActivateError(tr("auth.apiOffline"));
-        return;
-      }
-
       const data = (await res.json().catch(() => ({}))) as {
         ok?: boolean;
         activated?: boolean;
         code?: string;
+        detail?: string;
       };
 
       if (!res.ok || !data.ok) {
-        if (res.status >= 500 || res.status === 502 || res.status === 503) {
+        if (data.code === "POLLAR_UNREACHABLE" || res.status === 503) {
           setActivateError(tr("auth.apiOffline"));
+        } else if (data.code === "MISSING_POLLAR_SECRET") {
+          setActivateError(tr("auth.missingSecret"));
+        } else if (data.code === "WALLET_NOT_FOUND") {
+          setActivateError(tr("auth.walletNotFound"));
+        } else if (
+          data.code === "INSUFFICIENT_FUNDS" ||
+          res.status === 402 ||
+          data.code?.includes("402")
+        ) {
+          setActivateError(tr("auth.treasuryEmpty"));
         } else {
           setActivateError(
             data.code

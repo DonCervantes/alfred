@@ -30,4 +30,10 @@ export const en = {
   "auth.activateError": "Could not activate the wallet. Check the API and Pollar treasury.",
   "auth.apiOffline":
     "ALFRED API is offline. In another terminal run: pnpm --filter @alfred/api exec wrangler dev src/index.ts --port 8787",
+  "auth.missingSecret":
+    "Missing POLLAR_SECRET_KEY in apps/api/.dev.vars. Add your sec_testnet_ key and restart the API.",
+  "auth.walletNotFound":
+    "Pollar does not know this wallet. Sign out, sign in again, then activate.",
+  "auth.treasuryEmpty":
+    "Pollar treasury has no XLM. Top up Account Funding in the Pollar dashboard (Treasury).",
 } as const;

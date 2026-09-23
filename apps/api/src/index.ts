@@ -35,6 +35,21 @@ app.get("/api/health", (c) =>
   }),
 );
 
+function clientStatus(upstream: number): 400 | 401 | 402 | 403 | 404 | 409 | 500 | 503 {
+  if (
+    upstream === 400 ||
+    upstream === 401 ||
+    upstream === 402 ||
+    upstream === 403 ||
+    upstream === 404 ||
+    upstream === 409 ||
+    upstream === 503
+  ) {
+    return upstream;
+  }
+  return 500;
+}
+
 /**
  * Dogfood / deferred activation — simulates post-KYC funding.
  * Production: call this from a KYC webhook, not a public button without auth.
@@ -56,21 +71,36 @@ app.post("/api/activate", async (c) => {
   }
 
   const publicKey = body.publicKey?.trim();
-  if (!publicKey || !publicKey.startsWith("G")) {
+  if (!publicKey || !/^G[A-Z0-9]{55}$/.test(publicKey)) {
     return c.json(
       { ok: false, code: "INVALID_PUBLIC_KEY", success: false },
       400,
     );
   }
 
-  const response = await fetch(POLLAR_FUND_URL, {
-    method: "POST",
-    headers: {
-      "x-pollar-api-key": secret,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ publicKey }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(POLLAR_FUND_URL, {
+      method: "POST",
+      headers: {
+        "x-pollar-api-key": secret,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ publicKey }),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "fetch failed";
+    return c.json(
+      {
+        ok: false,
+        activated: false,
+        code: "POLLAR_UNREACHABLE",
+        detail: message,
+        success: false,
+      },
+      503,
+    );
+  }
 
   const payload = (await response.json().catch(() => ({}))) as {
     code?: string;
@@ -94,9 +124,10 @@ app.post("/api/activate", async (c) => {
         ok: false,
         activated: false,
         code: payload.code ?? "FUND_FAILED",
+        upstreamStatus: response.status,
         success: false,
       },
-      response.status as 400 | 402 | 404 | 500 | 503,
+      clientStatus(response.status),
     );
   }
 

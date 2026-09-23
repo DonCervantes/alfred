@@ -31,4 +31,10 @@ export const es = {
     "No se pudo activar la billetera. Revisa el API y el treasury de Pollar.",
   "auth.apiOffline":
     "El API de ALFRED no responde. En otra terminal: pnpm --filter @alfred/api exec wrangler dev src/index.ts --port 8787",
+  "auth.missingSecret":
+    "Falta POLLAR_SECRET_KEY en apps/api/.dev.vars. Pon tu sec_testnet_ y reinicia el API.",
+  "auth.walletNotFound":
+    "Pollar no reconoce esta billetera. Cierra sesión, entra otra vez y activa.",
+  "auth.treasuryEmpty":
+    "El treasury de Pollar no tiene XLM. Fondea Account Funding en el dashboard (Treasury).",
 } as const;
