@@ -28,7 +28,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 |----|--------|---|--------|---------|
 | **ALF-001** | Completar decisiones de producto (MVP, red, Pollar, dominio, locale) | P0 | Done | — |
 | **ALF-002** | Crear app Pollar (testnet) + keys + domains + auth + deferred + USDC | P0 | Done (branding pendiente) | ALF-001 |
-| **ALF-002b** | Webhook / evento de activación deferred (KYC o trigger manual dogfood) | P0 | Todo | ALF-002 |
+| **ALF-002b** | Webhook / evento de activación deferred (`POST /api/activate`) | P0 | Done | ALF-002 |
 | **ALF-002c** | Activar Passkey / C-accounts en Pollar cuando el dashboard lo ofrezca | P2 | Backlog | ALF-002 |
 | **ALF-002d** | Branding modal Pollar (ALFRED, accent #0071E3, logo) | P2 | Todo | ALF-002 |
 | **ALF-003** | Instalar Stellar CLI + generar `alfred-deployer` + Friendbot | P0 | Done | — |

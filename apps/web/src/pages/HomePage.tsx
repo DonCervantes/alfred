@@ -3,6 +3,8 @@ import { useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
 import { SignInSheet } from "../components/SignInSheet";
 
+const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8787";
+
 function truncateAddress(address: string) {
   if (address.length < 12) return address;
   return `${address.slice(0, 4)}…${address.slice(-4)}`;
@@ -33,10 +35,14 @@ function HomeWithoutPollar() {
 
 function HomeWithPollar() {
   const { locale, setLocale, tr } = useLocale();
-  const { isAuthenticated, wallet, login, logout } = usePollar();
+  const { isAuthenticated, wallet, login, logout, refreshWalletBalance } =
+    usePollar();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [busy, setBusy] = useState<"google" | "github" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activating, setActivating] = useState(false);
+  const [activated, setActivated] = useState(false);
+  const [activateError, setActivateError] = useState<string | null>(null);
 
   async function startLogin(provider: "google" | "github") {
     setError(null);
@@ -44,10 +50,60 @@ function HomeWithPollar() {
     try {
       await Promise.resolve(login({ provider }));
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : tr("auth.loginError");
+      const raw = err instanceof Error ? err.message : String(err);
+      const message = raw.includes("APPLICATION_HAS_NO_REDIRECT_URIS")
+        ? tr("auth.redirectUrisMissing")
+        : raw || tr("auth.loginError");
       setError(message);
       setBusy(null);
+    }
+  }
+
+  async function activateWallet() {
+    if (!wallet?.address) return;
+    setActivateError(null);
+    setActivating(true);
+    try {
+      const res = await fetch(`${API_URL}/api/activate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ publicKey: wallet.address }),
+      });
+
+      if (!res.ok && res.status === 0) {
+        setActivateError(tr("auth.apiOffline"));
+        return;
+      }
+
+      const data = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        activated?: boolean;
+        code?: string;
+      };
+
+      if (!res.ok || !data.ok) {
+        if (res.status >= 500 || res.status === 502 || res.status === 503) {
+          setActivateError(tr("auth.apiOffline"));
+        } else {
+          setActivateError(
+            data.code
+              ? `${tr("auth.activateError")} (${data.code})`
+              : tr("auth.activateError"),
+          );
+        }
+        return;
+      }
+
+      setActivated(true);
+      try {
+        await refreshWalletBalance();
+      } catch {
+        // balance refresh is best-effort after fund
+      }
+    } catch {
+      setActivateError(tr("auth.apiOffline"));
+    } finally {
+      setActivating(false);
     }
   }
 
@@ -67,9 +123,32 @@ function HomeWithPollar() {
                 {truncateAddress(wallet.address)}
               </p>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                {tr("auth.deferred")}
+                {activated ? tr("auth.activated") : tr("auth.deferred")}
               </p>
+              {!activated ? (
+                <p className="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">
+                  {tr("auth.activateHint")}
+                </p>
+              ) : null}
             </div>
+
+            {!activated ? (
+              <button
+                type="button"
+                onClick={() => void activateWallet()}
+                disabled={activating}
+                className="w-full max-w-md rounded-[var(--radius)] bg-[var(--accent)] px-7 py-3.5 text-base font-medium text-white shadow-sm transition hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+              >
+                {activating ? tr("auth.activating") : tr("auth.activate")}
+              </button>
+            ) : null}
+
+            {activateError ? (
+              <p className="max-w-md text-center text-sm text-[var(--danger)]" role="alert">
+                {activateError}
+              </p>
+            ) : null}
+
             <button
               type="button"
               onClick={() => logout()}

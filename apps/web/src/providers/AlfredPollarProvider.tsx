@@ -14,11 +14,15 @@ export function AlfredPollarProvider({ children }: { children: ReactNode }) {
     return <>{children}</>;
   }
 
+  const oauthRedirectUri =
+    typeof window !== "undefined" ? window.location.origin : undefined;
+
   return (
     <PollarProvider
       client={{
         apiKey,
         stellarNetwork: "testnet",
+        ...(oauthRedirectUri ? { oauthRedirectUri } : {}),
       }}
     >
       {children}

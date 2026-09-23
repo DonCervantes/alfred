@@ -31,15 +31,28 @@ POLLAR_SECRET_KEY=sec_testnet_...
 
 ---
 
-## Step 3 — Domains (allowlist)
+## Step 3 — Domains / Redirect URIs (allowlist) — CRÍTICO para Google/GitHub
 
 Build → **Domains**
 
-- [x] Añadir `http://localhost:3000`
-- [x] Añadir `http://127.0.0.1:3000`
+Añade el origin **completo** (con `http://` y puerto). Sin esto, Google responde:
+
+`APPLICATION_HAS_NO_REDIRECT_URIS`
+
+- [ ] `http://localhost:3000`
+- [ ] `http://127.0.0.1:3000`
 - [ ] (Más adelante) URL `*.pages.dev` de Cloudflare
 
-**✓ Step 3 listo** (confirmado por usuario)
+**Formato incorrecto (no sirve):** `localhost:3000` · `localhost` · `*`  
+**Formato correcto:** `http://localhost:3000`
+
+Si ya los habías añadido y sigue el error:
+1. Bórralos y vuelve a agregarlos exactamente como arriba
+2. Guarda / confirma en el dashboard
+3. Recarga ALFRED y reintenta Google
+4. Si el dashboard tiene un campo aparte **Redirect URIs**, añade los mismos valores
+
+**✓ Step 3** — verificar de nuevo si aparece `APPLICATION_HAS_NO_REDIRECT_URIS`
 
 ---
 

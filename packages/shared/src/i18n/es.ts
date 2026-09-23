@@ -20,4 +20,15 @@ export const es = {
   "auth.continueGithub": "Continuar con GitHub",
   "auth.close": "Cancelar",
   "auth.loginError": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+  "auth.redirectUrisMissing":
+    "Faltan redirect URIs en Pollar. En el dashboard ve a Build → Domains y agrega http://localhost:3000 (con http://).",
+  "auth.activate": "Activar billetera",
+  "auth.activating": "Activando…",
+  "auth.activated": "Billetera activada",
+  "auth.activateHint":
+    "Simula aprobación KYC: ALFRED fondea tu reserva Stellar vía Pollar.",
+  "auth.activateError":
+    "No se pudo activar la billetera. Revisa el API y el treasury de Pollar.",
+  "auth.apiOffline":
+    "El API de ALFRED no responde. En otra terminal: pnpm --filter @alfred/api exec wrangler dev src/index.ts --port 8787",
 } as const;
