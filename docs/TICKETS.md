@@ -32,7 +32,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-002c** | Activar Passkey / C-accounts en Pollar cuando el dashboard lo ofrezca | P2 | Backlog | ALF-002 |
 | **ALF-002d** | Branding modal Pollar (ALFRED, accent #0071E3, logo) | P2 | Todo | ALF-002 |
 | **ALF-003** | Instalar Stellar CLI + generar `alfred-deployer` + Friendbot | P0 | Done | — |
-| **ALF-004** | Cuenta Cloudflare + `wrangler login` + proyecto vacío Pages/Worker | P0 | Todo | — |
+| **ALF-004** | Cuenta Cloudflare + `wrangler login` + proyecto vacío Pages/Worker | P0 | Partial (docs+config) | — |
 | **ALF-005** | Crear espacio GitBook + estructura índice | P1 | Todo | ALF-001 |
 | **ALF-006** | Assets de marca v0 (wordmark, colores, favicon) | P1 | Todo | ALF-001 |
 
@@ -43,10 +43,10 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
 | **ALF-010** | Scaffold monorepo (`apps/web`, `apps/api`, `contracts`, `packages`) | P0 | Done | ALF-001 |
-| **ALF-011** | Config Cloudflare Worker (Hono) + D1 schema v0 | P0 | Todo | ALF-004, ALF-010 |
+| **ALF-011** | Config Cloudflare Worker (Hono) + D1 schema v0 | P0 | Partial (schema) | ALF-004, ALF-010 |
 | **ALF-012** | Config Pages/Vite React + Tailwind v4 + tokens Apple-like | P0 | Done | ALF-010 |
 | **ALF-013** | i18n ES/EN (diccionarios + switcher) | P0 | Done | ALF-012 |
-| **ALF-014** | `.env.example` + Secrets map (Pollar, Session, Stellar IDs) | P0 | Blocked | ALF-002, ALF-010 |
+| **ALF-014** | `.env.example` + Secrets map (Pollar, Session, Stellar IDs) | P0 | Done | ALF-002, ALF-010 |
 | **ALF-015** | CI GitHub Actions: lint + typecheck (skeleton) | P1 | Blocked | ALF-010 |
 
 ---

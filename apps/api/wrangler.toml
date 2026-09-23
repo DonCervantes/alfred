@@ -1,6 +1,23 @@
 name = "alfred-api"
 main = "src/index.ts"
 compatibility_date = "2025-10-15"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 STELLAR_NETWORK = "testnet"
+# Contract IDs (public) — secrets stay in .dev.vars / `wrangler secret`
+STELLAR_DID_REGISTRY = "CCLOO56UFL7623QRZSV5YZQLAPQ65RMMEACT6CLKF4HWNFW3QTLF2M3Q"
+STELLAR_VC_VAULT_FACTORY = "CAMHSVEVALQ4UORC6WXBX3L7I4YGFL7FTBBML4DJZCN637I4NXJLIZIY"
+STELLAR_USDC_SAC = "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA"
+
+# After `wrangler d1 create alfred-db`, paste database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "alfred-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+# After `wrangler r2 bucket create alfred-vc-blobs`
+[[r2_buckets]]
+binding = "VC_BLOBS"
+bucket_name = "alfred-vc-blobs"

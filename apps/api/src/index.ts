@@ -3,8 +3,13 @@ import { cors } from "hono/cors";
 
 type Bindings = {
   STELLAR_NETWORK: string;
+  STELLAR_DID_REGISTRY?: string;
+  STELLAR_VC_VAULT_FACTORY?: string;
+  STELLAR_USDC_SAC?: string;
   POLLAR_SECRET_KEY?: string;
   SESSION_SECRET?: string;
+  DB?: D1Database;
+  VC_BLOBS?: R2Bucket;
 };
 
 const POLLAR_FUND_URL = "https://server.api.pollar.xyz/v1/wallets/fund";
@@ -27,13 +32,26 @@ app.get("/", (c) =>
   }),
 );
 
-app.get("/api/health", (c) =>
-  c.json({
+app.get("/api/health", async (c) => {
+  let dbOk: boolean | null = null;
+  if (c.env.DB) {
+    try {
+      await c.env.DB.prepare("SELECT 1").first();
+      dbOk = true;
+    } catch {
+      dbOk = false;
+    }
+  }
+  return c.json({
     ok: true,
     service: "alfred-api",
     network: c.env.STELLAR_NETWORK ?? "testnet",
-  }),
-);
+    didRegistry: c.env.STELLAR_DID_REGISTRY ?? null,
+    vaultFactory: c.env.STELLAR_VC_VAULT_FACTORY ?? null,
+    db: dbOk,
+  });
+});
+
 
 function clientStatus(upstream: number): 400 | 401 | 402 | 403 | 404 | 409 | 500 | 503 {
   if (
