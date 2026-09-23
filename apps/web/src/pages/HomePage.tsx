@@ -1,6 +1,7 @@
 import { usePollar } from "@pollar/react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
+import { SignInSheet } from "../components/SignInSheet";
 
 function truncateAddress(address: string) {
   if (address.length < 12) return address;
@@ -32,7 +33,23 @@ function HomeWithoutPollar() {
 
 function HomeWithPollar() {
   const { locale, setLocale, tr } = useLocale();
-  const { isAuthenticated, wallet, openLoginModal, logout } = usePollar();
+  const { isAuthenticated, wallet, login, logout } = usePollar();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [busy, setBusy] = useState<"google" | "github" | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function startLogin(provider: "google" | "github") {
+    setError(null);
+    setBusy(provider);
+    try {
+      await Promise.resolve(login({ provider }));
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : tr("auth.loginError");
+      setError(message);
+      setBusy(null);
+    }
+  }
 
   return (
     <Shell locale={locale} setLocale={setLocale}>
@@ -62,20 +79,37 @@ function HomeWithPollar() {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-3 sm:flex-row">
+          <div className="flex flex-col items-center gap-3">
             <button
               type="button"
-              onClick={() => openLoginModal()}
+              onClick={() => {
+                setError(null);
+                setSheetOpen(true);
+              }}
               className="rounded-[var(--radius)] bg-[var(--accent)] px-7 py-3.5 text-base font-medium text-white shadow-sm transition hover:brightness-110 active:scale-[0.98]"
             >
               {tr("cta.continue")}
             </button>
             <p className="text-sm text-[var(--text-secondary)]">
-              Pollar · Cloudflare · Soroban
+              {tr("auth.poweredBy")}
             </p>
           </div>
         )}
       </Hero>
+
+      <SignInSheet
+        open={sheetOpen && !isAuthenticated}
+        busy={busy}
+        error={error}
+        onClose={() => {
+          if (busy) return;
+          setSheetOpen(false);
+          setError(null);
+        }}
+        onGoogle={() => void startLogin("google")}
+        onGithub={() => void startLogin("github")}
+        tr={tr}
+      />
     </Shell>
   );
 }
@@ -96,7 +130,7 @@ function Shell({
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 600px at 50% -10%, rgba(0,113,227,0.12), transparent 55%), linear-gradient(180deg, #ffffff 0%, #f5f5f7 55%, #ececf0 100%)",
+            "radial-gradient(1200px 600px at 50% -10%, rgba(0,113,227,0.10), transparent 55%), linear-gradient(180deg, #ffffff 0%, #f5f5f7 55%, #ececf0 100%)",
         }}
       />
 
