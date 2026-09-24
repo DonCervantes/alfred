@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { authRoutes } from "./routes/auth";
 
 type Bindings = {
   STELLAR_NETWORK: string;
@@ -26,7 +27,6 @@ app.use(
         "http://127.0.0.1:3000",
       ];
       if (allowed.includes(origin)) return origin;
-      // Cloudflare Pages preview + production
       if (
         origin.endsWith(".pages.dev") &&
         (origin.includes("alfred-web") || origin.includes("alfred"))
@@ -67,6 +67,7 @@ app.get("/api/health", async (c) => {
   });
 });
 
+app.route("/api/auth", authRoutes);
 
 function clientStatus(upstream: number): 400 | 401 | 402 | 403 | 404 | 409 | 500 | 503 {
   if (
@@ -85,7 +86,7 @@ function clientStatus(upstream: number): 400 | 401 | 402 | 403 | 404 | 409 | 500
 
 /**
  * Dogfood / deferred activation — simulates post-KYC funding.
- * Production: call this from a KYC webhook, not a public button without auth.
+ * Prefer calling after ALFRED session exists; publicKey still required.
  */
 app.post("/api/activate", async (c) => {
   const secret = c.env.POLLAR_SECRET_KEY;
@@ -141,7 +142,6 @@ app.post("/api/activate", async (c) => {
     content?: unknown;
   };
 
-  // Already funded is OK for dogfood idempotency
   if (response.status === 409 || payload.code === "WALLET_ALREADY_FUNDED") {
     return c.json({
       ok: true,

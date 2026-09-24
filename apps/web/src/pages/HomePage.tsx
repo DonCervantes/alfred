@@ -1,5 +1,5 @@
 import { usePollar } from "@pollar/react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
 import { SignInSheet } from "../components/SignInSheet";
 
@@ -35,7 +35,7 @@ function HomeWithoutPollar() {
 
 function HomeWithPollar() {
   const { locale, setLocale, tr } = useLocale();
-  const { isAuthenticated, wallet, login, logout, refreshWalletBalance } =
+  const { isAuthenticated, verified, wallet, login, logout, refreshWalletBalance } =
     usePollar();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [busy, setBusy] = useState<"google" | "github" | null>(null);
@@ -43,6 +43,40 @@ function HomeWithPollar() {
   const [activating, setActivating] = useState(false);
   const [activated, setActivated] = useState(false);
   const [activateError, setActivateError] = useState<string | null>(null);
+  const [sessionReady, setSessionReady] = useState(false);
+
+  // ALF-031: bridge Pollar login → ALFRED HttpOnly session cookie
+  useEffect(() => {
+    if (!isAuthenticated || !verified || !wallet?.address) {
+      setSessionReady(false);
+      return;
+    }
+
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/auth/session`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            publicKey: wallet.address,
+            locale,
+          }),
+        });
+        if (!cancelled) {
+          setSessionReady(res.ok);
+          if (res.ok) setBusy(null);
+        }
+      } catch {
+        if (!cancelled) setSessionReady(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, verified, wallet?.address, locale]);
 
   async function startLogin(provider: "google" | "github") {
     setError(null);
@@ -59,6 +93,20 @@ function HomeWithPollar() {
     }
   }
 
+  async function signOut() {
+    try {
+      await fetch(`${API_URL}/api/auth/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch {
+      // still clear Pollar client
+    }
+    setSessionReady(false);
+    setActivated(false);
+    logout();
+  }
+
   async function activateWallet() {
     if (!wallet?.address) return;
     setActivateError(null);
@@ -66,6 +114,7 @@ function HomeWithPollar() {
     try {
       const res = await fetch(`${API_URL}/api/activate`, {
         method: "POST",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ publicKey: wallet.address }),
       });
@@ -133,6 +182,11 @@ function HomeWithPollar() {
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                 {activated ? tr("auth.activated") : tr("auth.deferred")}
               </p>
+              {sessionReady ? (
+                <p className="mt-2 text-xs text-[var(--success)]">
+                  {tr("auth.sessionReady")}
+                </p>
+              ) : null}
               {!activated ? (
                 <p className="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">
                   {tr("auth.activateHint")}
@@ -159,7 +213,7 @@ function HomeWithPollar() {
 
             <button
               type="button"
-              onClick={() => logout()}
+              onClick={() => void signOut()}
               className="text-sm text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text)] hover:underline"
             >
               {tr("cta.signOut")}

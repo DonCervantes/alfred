@@ -43,7 +43,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
 | **ALF-010** | Scaffold monorepo (`apps/web`, `apps/api`, `contracts`, `packages`) | P0 | Done | ALF-001 |
-| **ALF-011** | Config Cloudflare Worker (Hono) + D1 schema v0 | P0 | Partial (schema) | ALF-004, ALF-010 |
+| **ALF-011** | Config Cloudflare Worker (Hono) + D1 schema v0 | P0 | Done | ALF-004, ALF-010 |
 | **ALF-012** | Config Pages/Vite React + Tailwind v4 + tokens Apple-like | P0 | Done | ALF-010 |
 | **ALF-013** | i18n ES/EN (diccionarios + switcher) | P0 | Done | ALF-012 |
 | **ALF-014** | `.env.example` + Secrets map (Pollar, Session, Stellar IDs) | P0 | Done | ALF-002, ALF-010 |
@@ -71,8 +71,8 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
 | **ALF-030** | Integrar `@pollar/react` Sign-in en Continuar / landing | P0 | Done | ALF-002, ALF-012 |
-| **ALF-031** | `POST /api/auth/session` + cookies HttpOnly | P0 | Blocked | ALF-011, ALF-030 |
-| **ALF-032** | `GET /api/me` (perfil, did, vault) | P0 | Blocked | ALF-031 |
+| **ALF-031** | `POST /api/auth/session` + cookies HttpOnly | P0 | Done | ALF-011, ALF-030 |
+| **ALF-032** | `GET /api/me` (perfil, did, vault) | P0 | Partial (stub) | ALF-031 |
 | **ALF-033** | Endpoints DID register + Vault deploy (preparar XDR) | P0 | Blocked | ALF-026, ALF-032 |
 | **ALF-034** | Issue/list/revoke + encrypt R2 + hash on-chain | P0 | Blocked | ALF-033 |
 | **ALF-035** | Presentation links + `GET /api/verify/:token` público | P0 | Blocked | ALF-034 |
