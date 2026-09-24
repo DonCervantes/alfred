@@ -72,8 +72,8 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 |----|--------|---|--------|---------|
 | **ALF-030** | Integrar `@pollar/react` Sign-in en Continuar / landing | P0 | Done | ALF-002, ALF-012 |
 | **ALF-031** | `POST /api/auth/session` + cookies HttpOnly | P0 | Done | ALF-011, ALF-030 |
-| **ALF-032** | `GET /api/me` (perfil, did, vault) | P0 | Partial (stub) | ALF-031 |
-| **ALF-033** | Endpoints DID register + Vault deploy (preparar XDR) | P0 | Blocked | ALF-026, ALF-032 |
+| **ALF-032** | `GET /api/me` (perfil, did, vault) | P0 | Done | ALF-031 |
+| **ALF-033** | Endpoints DID register + Vault deploy (preparar XDR) | P0 | Done | ALF-026, ALF-032 |
 | **ALF-034** | Issue/list/revoke + encrypt R2 + hash on-chain | P0 | Blocked | ALF-033 |
 | **ALF-035** | Presentation links + `GET /api/verify/:token` público | P0 | Blocked | ALF-034 |
 | **ALF-036** | Rate limits + CSP básicos | P1 | Blocked | ALF-031 |
@@ -85,7 +85,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
 | **ALF-040** | Landing marketing (brand hero + 1 CTA) | P0 | Blocked | ALF-013 |
-| **ALF-041** | First-run wizard: Create my ALFRED (DID+Vault) | P0 | Blocked | ALF-033, ALF-030 |
+| **ALF-041** | First-run wizard: Create my ALFRED (DID+Vault) | P0 | Done | ALF-033, ALF-030 |
 | **ALF-042** | Vault list + empty state + detail | P0 | Blocked | ALF-034 |
 | **ALF-043** | Flujo Issue (issuer) | P0 | Blocked | ALF-034 |
 | **ALF-044** | Public verify `/v/:token` | P0 | Blocked | ALF-035 |

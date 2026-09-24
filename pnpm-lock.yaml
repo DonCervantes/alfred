@@ -20,6 +20,15 @@ importers:
       '@alfred/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@alfred/stellar':
+        specifier: workspace:*
+        version: link:../../packages/stellar
+      '@stellar/stellar-sdk':
+        specifier: ^14.5.0
+        version: 14.6.1(debug@4.4.3(supports-color@10.2.2))(supports-color@10.2.2)
+      buffer:
+        specifier: 6.0.3
+        version: 6.0.3
       hono:
         specifier: ^4.7.11
         version: 4.13.8

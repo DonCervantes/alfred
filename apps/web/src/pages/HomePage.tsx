@@ -2,6 +2,7 @@ import { usePollar } from "@pollar/react";
 import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
 import { SignInSheet } from "../components/SignInSheet";
+import { CreateAlfredWizard } from "../components/CreateAlfredWizard";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8787";
 
@@ -9,6 +10,14 @@ function truncateAddress(address: string) {
   if (address.length < 12) return address;
   return `${address.slice(0, 4)}…${address.slice(-4)}`;
 }
+
+type AlfredProfile = {
+  id: string;
+  stellarAddress: string | null;
+  did: string | null;
+  vaultAddress: string | null;
+  needsOnboarding?: boolean;
+};
 
 export function HomePage() {
   const hasPollarKey = Boolean(import.meta.env.VITE_POLLAR_PUBLISHABLE_KEY);
@@ -44,11 +53,32 @@ function HomeWithPollar() {
   const [activated, setActivated] = useState(false);
   const [activateError, setActivateError] = useState<string | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
+  const [profile, setProfile] = useState<AlfredProfile | null>(null);
+
+  async function refreshProfile() {
+    try {
+      const res = await fetch(`${API_URL}/api/auth/me`, {
+        credentials: "include",
+      });
+      if (!res.ok) {
+        setProfile(null);
+        return;
+      }
+      const data = (await res.json()) as {
+        ok?: boolean;
+        user?: AlfredProfile;
+      };
+      if (data.ok && data.user) setProfile(data.user);
+    } catch {
+      setProfile(null);
+    }
+  }
 
   // ALF-031: bridge Pollar login → ALFRED HttpOnly session cookie
   useEffect(() => {
     if (!isAuthenticated || !verified || !wallet?.address) {
       setSessionReady(false);
+      setProfile(null);
       return;
     }
 
@@ -66,7 +96,10 @@ function HomeWithPollar() {
         });
         if (!cancelled) {
           setSessionReady(res.ok);
-          if (res.ok) setBusy(null);
+          if (res.ok) {
+            setBusy(null);
+            await refreshProfile();
+          }
         }
       } catch {
         if (!cancelled) setSessionReady(false);
@@ -104,6 +137,7 @@ function HomeWithPollar() {
     }
     setSessionReady(false);
     setActivated(false);
+    setProfile(null);
     logout();
   }
 
@@ -187,12 +221,44 @@ function HomeWithPollar() {
                   {tr("auth.sessionReady")}
                 </p>
               ) : null}
+              {profile?.did ? (
+                <p className="mt-2 text-xs text-[var(--text-secondary)]">
+                  {tr("onboard.profileDid")}:{" "}
+                  <span className="font-mono">{profile.did}</span>
+                </p>
+              ) : null}
+              {profile?.vaultAddress ? (
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">
+                  {tr("onboard.profileVault")}:{" "}
+                  <span className="font-mono">
+                    {truncateAddress(profile.vaultAddress)}
+                  </span>
+                </p>
+              ) : null}
               {!activated ? (
                 <p className="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">
                   {tr("auth.activateHint")}
                 </p>
               ) : null}
             </div>
+
+            {sessionReady && profile?.needsOnboarding ? (
+              <CreateAlfredWizard
+                onDone={(p) => {
+                  setProfile((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          did: p.did,
+                          vaultAddress: p.vaultAddress,
+                          needsOnboarding: false,
+                        }
+                      : prev,
+                  );
+                  void refreshProfile();
+                }}
+              />
+            ) : null}
 
             {!activated ? (
               <button

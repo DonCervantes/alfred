@@ -157,3 +157,29 @@ export async function getUserById(
       .first<AlfredUser>()) ?? null
   );
 }
+
+export async function updateUserDid(
+  db: D1Database,
+  userId: string,
+  did: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE users SET did = ?, updated_at = datetime('now') WHERE id = ?`,
+    )
+    .bind(did, userId)
+    .run();
+}
+
+export async function updateUserVault(
+  db: D1Database,
+  userId: string,
+  vaultAddress: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE users SET vault_address = ?, updated_at = datetime('now') WHERE id = ?`,
+    )
+    .bind(vaultAddress, userId)
+    .run();
+}

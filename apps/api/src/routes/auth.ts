@@ -101,6 +101,7 @@ authRoutes.post("/session", async (c) => {
       did: user.did,
       vaultAddress: user.vault_address,
       locale: user.locale,
+      needsOnboarding: !user.did || !user.vault_address,
     },
   });
 });
@@ -159,6 +160,7 @@ authRoutes.get("/me", async (c) => {
       did: user.did,
       vaultAddress: user.vault_address,
       locale: user.locale,
+      needsOnboarding: !user.did || !user.vault_address,
     },
   });
 });

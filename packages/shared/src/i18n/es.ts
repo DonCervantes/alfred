@@ -40,4 +40,17 @@ export const es = {
   "auth.walletCreationFailed":
     "Pollar no pudo crear/fondear la billetera en Stellar. Revisa Treasury → Account Funding (XLM testnet) y reintenta. También puedes fondear en Users → Wallets.",
   "auth.sessionReady": "Sesión ALFRED lista",
+  "onboard.title": "Crea tu ALFRED",
+  "onboard.supporting":
+    "Registramos tu identidad (DID) y desplegamos tu vault de credenciales en Stellar testnet.",
+  "onboard.stepDid": "Registrar DID on-chain",
+  "onboard.stepVault": "Desplegar vault personal",
+  "onboard.cta": "Crear mi ALFRED",
+  "onboard.working": "Firmando con Pollar…",
+  "onboard.done": "Listo. Tu identidad y vault están activos.",
+  "onboard.error": "No se pudo completar el alta. Reintenta.",
+  "onboard.pollarAuthPolicy":
+    "Pollar rechazó la firma Soroban. En el dashboard: Treasury → Auth Policy, permite alfred-did-registry.register y alfred-vc-vault-factory.deploy.",
+  "onboard.profileDid": "DID",
+  "onboard.profileVault": "Vault",
 } as const;

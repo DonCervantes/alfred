@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { authRoutes } from "./routes/auth";
+import { didRoutes } from "./routes/did";
+import { vaultRoutes } from "./routes/vault";
 
 type Bindings = {
   STELLAR_NETWORK: string;
@@ -68,6 +70,8 @@ app.get("/api/health", async (c) => {
 });
 
 app.route("/api/auth", authRoutes);
+app.route("/api/did", didRoutes);
+app.route("/api/vault", vaultRoutes);
 
 function clientStatus(upstream: number): 400 | 401 | 402 | 403 | 404 | 409 | 500 | 503 {
   if (

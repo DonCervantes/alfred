@@ -39,4 +39,17 @@ export const en = {
   "auth.walletCreationFailed":
     "Pollar could not create/fund the wallet on Stellar. Check Treasury → Account Funding has testnet XLM, then retry. You can also Fund the wallet under Users → Wallets.",
   "auth.sessionReady": "ALFRED session ready",
+  "onboard.title": "Create your ALFRED",
+  "onboard.supporting":
+    "We register your DID and deploy your credential vault on Stellar testnet.",
+  "onboard.stepDid": "Register on-chain DID",
+  "onboard.stepVault": "Deploy personal vault",
+  "onboard.cta": "Create my ALFRED",
+  "onboard.working": "Signing with Pollar…",
+  "onboard.done": "Done. Your identity and vault are live.",
+  "onboard.error": "Could not finish setup. Try again.",
+  "onboard.pollarAuthPolicy":
+    "Pollar blocked the Soroban signature. In the dashboard: Treasury → Auth Policy, allow alfred-did-registry.register and alfred-vc-vault-factory.deploy.",
+  "onboard.profileDid": "DID",
+  "onboard.profileVault": "Vault",
 } as const;
