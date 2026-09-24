@@ -19,7 +19,22 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use(
   "*",
   cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: (origin) => {
+      if (!origin) return "";
+      const allowed = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+      ];
+      if (allowed.includes(origin)) return origin;
+      // Cloudflare Pages preview + production
+      if (
+        origin.endsWith(".pages.dev") &&
+        (origin.includes("alfred-web") || origin.includes("alfred"))
+      ) {
+        return origin;
+      }
+      return "";
+    },
     credentials: true,
   }),
 );

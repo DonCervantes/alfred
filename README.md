@@ -6,13 +6,26 @@ Credenciales verificables en Stellar — con UX de producto, no de explorer.
 
 ---
 
+## Live demo (testnet)
+
+| Surface | URL |
+|---------|-----|
+| **Web (Pages)** | https://alfred-web-283.pages.dev |
+| **API (Worker)** | https://alfred.cruzcervantesdanieladrianelias.workers.dev |
+| API health | https://alfred.cruzcervantesdanieladrianelias.workers.dev/api/health |
+
+Login: Pollar (Google / social) → optional **Activar billetera** (Deferred funding).  
+Setup notes: [`docs/CLOUDFLARE-SETUP.md`](docs/CLOUDFLARE-SETUP.md) · [`docs/POLLAR-SETUP.md`](docs/POLLAR-SETUP.md)
+
+---
+
 ## Stack
 
 | Piece | Choice |
 |-------|--------|
 | Monorepo | pnpm workspaces + Turborepo |
 | Web | Vite · React 19 · Tailwind v4 → Cloudflare Pages |
-| API | Hono · Cloudflare Workers |
+| API | Hono · Cloudflare Workers + D1 |
 | Contracts | Rust / Soroban · Stellar CLI |
 | Login | Pollar (`@pollar/react`) |
 | Docs | `docs/` → GitBook later |
@@ -69,8 +82,8 @@ Issue fee is **off** by default (`quote_issue_fee = 0`). Turn on with `.\contrac
 ## Repo layout
 
 ```
-apps/web          # Product UI
-apps/api          # Workers API (Hono)
+apps/web          # Product UI → alfred-web Pages
+apps/api          # Workers API (Hono) + D1 → alfred Worker
 packages/shared   # i18n ES/EN + shared types
 packages/stellar  # Contract IDs + generated bindings
 contracts/        # Soroban: DID registry, VC vault, factory
@@ -98,6 +111,20 @@ cd contracts
 cargo test --workspace
 ```
 
+### Deploy (Cloudflare)
+
+```powershell
+# API
+cd apps/api
+.\node_modules\.bin\wrangler.cmd deploy
+
+# Web
+cd apps/web
+node .\node_modules\typescript\bin\tsc -b
+node .\node_modules\vite\bin\vite.js build
+.\node_modules\.bin\wrangler.cmd pages deploy dist --project-name=alfred-web --commit-dirty=true
+```
+
 ---
 
 ## Docs
@@ -107,7 +134,7 @@ cargo test --workspace
 | [docs/TICKETS.md](docs/TICKETS.md) | Build backlog |
 | [docs/deployments/testnet.md](docs/deployments/testnet.md) | Live contract IDs |
 | [docs/ALFRED-MASTER-SPEC.md](docs/ALFRED-MASTER-SPEC.md) | PRD · TRD · UX · plan |
-| [docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md) | Wrangler · D1 · R2 · Pages |
+| [docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md) | Wrangler · D1 · Pages URLs |
 | [docs/POLLAR-SETUP.md](docs/POLLAR-SETUP.md) | Pollar checklist |
 | [docs/STELLAR-CLI-SETUP.md](docs/STELLAR-CLI-SETUP.md) | CLI + deployer |
 | [docs/PITCH-DECK.md](docs/PITCH-DECK.md) | Pitch |
@@ -117,5 +144,6 @@ cargo test --workspace
 
 ## Status
 
-`v0.2.0` — Pollar login + activate, DID/vault/factory on **testnet**, TS bindings.  
-Next: `wrangler login` → D1/R2/Pages ([docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md)) → session API.
+`v0.3.0` — **Live on Cloudflare**: Pollar login + wallet activate on Pages, Worker API + D1, DID/vault/factory on Stellar **testnet**.
+
+Next: session cookies (ALF-031), DID+vault first-run wizard, issue/verify product UI.

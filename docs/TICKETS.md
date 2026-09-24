@@ -32,7 +32,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-002c** | Activar Passkey / C-accounts en Pollar cuando el dashboard lo ofrezca | P2 | Backlog | ALF-002 |
 | **ALF-002d** | Branding modal Pollar (ALFRED, accent #0071E3, logo) | P2 | Todo | ALF-002 |
 | **ALF-003** | Instalar Stellar CLI + generar `alfred-deployer` + Friendbot | P0 | Done | — |
-| **ALF-004** | Cuenta Cloudflare + `wrangler login` + proyecto vacío Pages/Worker | P0 | Partial (docs+config) | — |
+| **ALF-004** | Cuenta Cloudflare + `wrangler login` + proyecto vacío Pages/Worker | P0 | Done | — |
 | **ALF-005** | Crear espacio GitBook + estructura índice | P1 | Todo | ALF-001 |
 | **ALF-006** | Assets de marca v0 (wordmark, colores, favicon) | P1 | Todo | ALF-001 |
 
