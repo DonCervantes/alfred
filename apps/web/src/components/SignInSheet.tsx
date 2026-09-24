@@ -29,7 +29,7 @@ export function SignInSheet({
       <button
         type="button"
         aria-label={tr("auth.close")}
-        className="absolute inset-0 bg-black/25 backdrop-blur-[2px] transition"
+        className="absolute inset-0 bg-[#1d1d1f]/35 backdrop-blur-[10px] transition"
         onClick={onClose}
       />
 
@@ -37,61 +37,97 @@ export function SignInSheet({
         role="dialog"
         aria-modal="true"
         aria-labelledby="alfred-signin-title"
-        className="relative z-10 w-full max-w-md animate-[sheet-in_280ms_ease-out] rounded-t-[28px] bg-[var(--surface)] px-6 pb-8 pt-5 shadow-2xl ring-1 ring-black/5 sm:rounded-[28px] sm:px-8 sm:pb-9 sm:pt-8"
+        className="alfred-sheet relative z-10 w-full max-w-[400px] overflow-hidden rounded-t-[28px] sm:rounded-[28px]"
+        style={{
+          background:
+            "linear-gradient(165deg, #ffffff 0%, #f7f8fb 55%, #eef1f6 100%)",
+          boxShadow:
+            "0 24px 80px rgba(29,29,31,0.22), 0 0 0 1px rgba(255,255,255,0.7) inset",
+        }}
       >
-        <div className="mx-auto mb-5 h-1 w-10 rounded-full bg-black/10 sm:hidden" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-40"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0,113,227,0.16), transparent 70%)",
+          }}
+        />
 
-        <h2
-          id="alfred-signin-title"
-          className="text-center text-[28px] font-semibold tracking-tight text-[var(--text)]"
-        >
-          {tr("cta.signIn")}
-        </h2>
-        <p className="mt-2 text-center text-[15px] leading-relaxed text-[var(--text-secondary)]">
-          {tr("auth.sheetSupporting")}
-        </p>
+        <div className="relative px-7 pb-8 pt-6 sm:px-8 sm:pb-9 sm:pt-8">
+          <div className="mx-auto mb-6 h-1 w-10 rounded-full bg-black/10 sm:hidden" />
 
-        <div className="mt-8 flex flex-col gap-3">
-          <ProviderButton
-            label={tr("auth.continueGoogle")}
-            busy={busy === "google"}
-            disabled={busy !== null}
-            onClick={onGoogle}
-            icon={<GoogleMark />}
-          />
-          <ProviderButton
-            label={tr("auth.continueGithub")}
-            busy={busy === "github"}
-            disabled={busy !== null}
-            onClick={onGithub}
-            icon={<GithubMark />}
-          />
-        </div>
+          <div className="flex justify-center">
+            <img
+              src="/alfred-mark.svg"
+              alt=""
+              width={56}
+              height={56}
+              className="h-14 w-14 drop-shadow-[0_8px_20px_rgba(0,113,227,0.28)]"
+            />
+          </div>
 
-        {error ? (
-          <p className="mt-4 text-center text-sm text-[var(--danger)]" role="alert">
-            {error}
+          <h2
+            id="alfred-signin-title"
+            className="mt-5 text-center text-[1.75rem] font-semibold tracking-[-0.03em] text-[var(--text)]"
+          >
+            {tr("cta.signIn")}
+          </h2>
+          <p className="mx-auto mt-2 max-w-[18rem] text-center text-[15px] leading-relaxed text-[var(--text-secondary)]">
+            {tr("auth.sheetSupporting")}
           </p>
-        ) : null}
 
-        <p className="mt-6 text-center text-xs leading-relaxed text-[var(--text-secondary)]">
-          {tr("auth.sheetFootnote")}
-        </p>
+          <div className="mt-8 flex flex-col gap-2.5">
+            <ProviderButton
+              label={tr("auth.continueGoogle")}
+              busy={busy === "google"}
+              disabled={busy !== null}
+              onClick={onGoogle}
+              icon={<GoogleMark />}
+            />
+            <ProviderButton
+              label={tr("auth.continueGithub")}
+              busy={busy === "github"}
+              disabled={busy !== null}
+              onClick={onGithub}
+              icon={<GithubMark />}
+            />
+          </div>
 
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={busy !== null}
-          className="mt-4 w-full py-2 text-sm font-medium text-[var(--accent)] disabled:opacity-40"
-        >
-          {tr("auth.close")}
-        </button>
+          {error ? (
+            <p
+              className="mt-4 text-center text-sm leading-snug text-[var(--danger)]"
+              role="alert"
+            >
+              {error}
+            </p>
+          ) : null}
+
+          <p className="mt-6 text-center text-[12px] leading-relaxed text-[var(--text-secondary)]">
+            {tr("auth.sheetFootnote")}
+          </p>
+
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={busy !== null}
+            className="mt-3 w-full py-2.5 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text)] disabled:opacity-40"
+          >
+            {tr("auth.close")}
+          </button>
+        </div>
       </div>
 
       <style>{`
-        @keyframes sheet-in {
-          from { opacity: 0; transform: translateY(18px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes alfred-sheet-in {
+          from { opacity: 0; transform: translateY(28px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .alfred-sheet {
+          animation: alfred-sheet-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .alfred-sheet { animation: none; }
         }
       `}</style>
     </div>
@@ -116,11 +152,22 @@ function ProviderButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="flex h-12 w-full items-center justify-center gap-3 rounded-2xl bg-[#f5f5f7] text-[15px] font-medium text-[var(--text)] transition hover:bg-[#ebebed] active:scale-[0.99] disabled:cursor-wait disabled:opacity-60"
+      className="relative flex h-[52px] w-full items-center justify-center gap-3 rounded-[16px] bg-white text-[15px] font-semibold tracking-tight text-[var(--text)] shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.08] transition hover:bg-[#fafafa] hover:ring-black/[0.12] active:scale-[0.985] disabled:cursor-wait disabled:opacity-55"
     >
-      <span className="flex h-5 w-5 items-center justify-center">{icon}</span>
+      <span className="absolute left-5 flex h-5 w-5 items-center justify-center">
+        {busy ? <Spinner /> : icon}
+      </span>
       <span>{busy ? "…" : label}</span>
     </button>
+  );
+}
+
+function Spinner() {
+  return (
+    <span
+      className="block h-[18px] w-[18px] animate-spin rounded-full border-2 border-black/15 border-t-[var(--accent)]"
+      aria-hidden
+    />
   );
 }
 

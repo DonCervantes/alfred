@@ -6,3 +6,6 @@ onlyBuiltDependencies:
   - esbuild
   - workerd
   - sharp
+
+overrides:
+  axios: 1.12.2

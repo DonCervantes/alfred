@@ -15,7 +15,10 @@ Credenciales verificables en Stellar — con UX de producto, no de explorer.
 | API health | https://alfred.cruzcervantesdanieladrianelias.workers.dev/api/health |
 
 Login: Pollar (Google / social) → optional **Activar billetera** (Deferred funding).  
-Setup notes: [`docs/CLOUDFLARE-SETUP.md`](docs/CLOUDFLARE-SETUP.md) · [`docs/POLLAR-SETUP.md`](docs/POLLAR-SETUP.md)
+Setup notes: [`docs/CLOUDFLARE-SETUP.md`](docs/CLOUDFLARE-SETUP.md) · [`docs/POLLAR-SETUP.md`](docs/POLLAR-SETUP.md)  
+**Dogfood (ALF-053):** [`docs/DOGFOOD.md`](docs/DOGFOOD.md)  
+**Security (ALF-052):** [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) · [`docs/OPERATOR-RUNBOOK.md`](docs/OPERATOR-RUNBOOK.md)  
+**GitBook (ALF-005):** https://odyssey-15.gitbook.io/alfred-docs/ · [`docs/gitbook/`](docs/gitbook/)
 
 ---
 
@@ -28,7 +31,7 @@ Setup notes: [`docs/CLOUDFLARE-SETUP.md`](docs/CLOUDFLARE-SETUP.md) · [`docs/PO
 | API | Hono · Cloudflare Workers + D1 |
 | Contracts | Rust / Soroban · Stellar CLI |
 | Login | Pollar (`@pollar/react`) |
-| Docs | `docs/` → GitBook later |
+| Docs | [ALFRED Docs (GitBook)](https://odyssey-15.gitbook.io/alfred-docs/) · source [`docs/gitbook/`](docs/gitbook/) |
 
 ---
 
@@ -103,6 +106,15 @@ pnpm dev:api    # http://127.0.0.1:8787
 
 Copy `.env.example` → `apps/web/.env.local` and `apps/api/.dev.vars` (never commit secrets).
 
+### E2E smoke (ALF-051)
+
+```powershell
+pnpm --filter @alfred/web exec playwright install chromium   # once
+pnpm test:e2e
+```
+
+Uses `VITE_E2E_MOCK=1` (stub Pollar) + mocked `/api/verify`. No real OAuth.
+
 ### Contracts
 
 ```powershell
@@ -132,6 +144,11 @@ node .\node_modules\vite\bin\vite.js build
 | Document | Contents |
 |----------|----------|
 | [docs/TICKETS.md](docs/TICKETS.md) | Build backlog |
+| [docs/gitbook/](docs/gitbook/) | Public docs source (GitBook) |
+| [docs/GITBOOK-SETUP.md](docs/GITBOOK-SETUP.md) | Connect / publish GitBook space |
+| [docs/DOGFOOD.md](docs/DOGFOOD.md) | Dogfood 5 usuarios (ALF-053) |
+| [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md) | Threat model v0 |
+| [docs/OPERATOR-RUNBOOK.md](docs/OPERATOR-RUNBOOK.md) | Ops / incidentes |
 | [docs/deployments/testnet.md](docs/deployments/testnet.md) | Live contract IDs |
 | [docs/ALFRED-MASTER-SPEC.md](docs/ALFRED-MASTER-SPEC.md) | PRD · TRD · UX · plan |
 | [docs/CLOUDFLARE-SETUP.md](docs/CLOUDFLARE-SETUP.md) | Wrangler · D1 · Pages URLs |

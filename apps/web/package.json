@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "deploy": "pnpm run build && wrangler pages deploy dist --project-name=alfred-web",
     "typecheck": "tsc --noEmit",
-    "lint": "echo \"lint: web ok\""
+    "lint": "echo \"lint: web ok\"",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium"
   },
   "dependencies": {
     "@alfred/shared": "workspace:*",
@@ -19,6 +21,7 @@
     "react-router-dom": "^7.6.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/vite": "^4.1.10",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",

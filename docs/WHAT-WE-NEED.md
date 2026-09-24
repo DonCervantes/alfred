@@ -44,9 +44,11 @@ Checklist de inputs, cuentas y decisiones. Sin estos ítems no podemos desplegar
 - [ ] Dominio + DNS en Cloudflare (cuando exista)
 
 ### GitBook (docs públicas)
-- [ ] Espacio GitBook “ALFRED Docs”
-- [ ] Sync con `docs/gitbook/` del repo (o export manual)
-- [ ] Dominio docs: `docs.alfred.*`
+- [x] Estructura índice en repo: `docs/gitbook/` + `SUMMARY.md` (ALF-005)
+- [x] Espacio GitBook “ALFRED Docs” publicado: https://odyssey-15.gitbook.io/alfred-docs/
+- [x] Quickstart + protocol + security + reference (ALF-050 v0)
+- [ ] Git Sync repo ↔ GitBook (opcional)
+- [ ] Dominio docs: `docs.alfred.*` (después)
 
 ### GitHub
 - [ ] Org o user donde vivirá el monorepo (`alfred-protocol` / `alfred-hq`)

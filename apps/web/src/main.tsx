@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { App } from "./App";
 import { LocaleProvider } from "./i18n/LocaleProvider";
 import { AlfredPollarProvider } from "./providers/AlfredPollarProvider";
+import "@pollar/react/styles.css";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(

@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @alfred/shared typecheck
+      - run: pnpm --filter @alfred/web typecheck
+      - run: pnpm --filter @alfred/web build
+        env:
+          VITE_API_URL: https://alfred.cruzcervantesdanieladrianelias.workers.dev
+          VITE_POLLAR_PUBLISHABLE_KEY: pub_testnet_ci_placeholder
+      - run: pnpm --filter @alfred/web exec playwright install chromium --with-deps
+      - run: pnpm --filter @alfred/web test:e2e
+        env:
+          CI: true

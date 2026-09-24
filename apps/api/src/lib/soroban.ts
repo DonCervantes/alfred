@@ -1,5 +1,6 @@
 /** Build Soroban invoke XDRs for DID register + vault deploy (ALF-033). */
 
+import "./cf-fetch-patch";
 import { Buffer } from "buffer";
 import {
   DidRegistryClient,
@@ -9,6 +10,15 @@ import {
 } from "@alfred/stellar";
 
 const RPC = "https://soroban-testnet.stellar.org";
+
+function clientOpts(contractId: string, publicKey?: string) {
+  return {
+    contractId,
+    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
+    rpcUrl: RPC,
+    ...(publicKey ? { publicKey } : {}),
+  };
+}
 
 export function randomBytes(n: number): Buffer {
   const u8 = crypto.getRandomValues(new Uint8Array(n));
@@ -68,12 +78,9 @@ export async function buildDidRegisterXdr(input: {
   controller: string;
   didId: Buffer;
 }): Promise<{ unsignedXdr: string; didIdHex: string; did: string }> {
-  const client = new DidRegistryClient({
-    contractId: input.contractId,
-    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
-    rpcUrl: RPC,
-    publicKey: input.controller,
-  });
+  const client = new DidRegistryClient(
+    clientOpts(input.contractId, input.controller),
+  );
 
   const initial_record = {
     controller: input.controller,
@@ -95,10 +102,13 @@ export async function buildDidRegisterXdr(input: {
     deactivated: false,
   };
 
-  const assembled = await client.register({
-    did_id: input.didId,
-    initial_record,
-  });
+  const assembled = await client.register(
+    {
+      did_id: input.didId,
+      initial_record,
+    },
+    { restore: false },
+  );
 
   const didIdHex = bytesToHex(input.didId);
   return {
@@ -113,17 +123,17 @@ export async function buildVaultDeployXdr(input: {
   owner: string;
   salt: Buffer;
 }): Promise<{ unsignedXdr: string; saltHex: string; predictedVault?: string }> {
-  const client = new VcVaultFactoryClient({
-    contractId: input.factoryId,
-    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
-    rpcUrl: RPC,
-    publicKey: input.owner,
-  });
+  const client = new VcVaultFactoryClient(
+    clientOpts(input.factoryId, input.owner),
+  );
 
-  const assembled = await client.deploy({
-    owner: input.owner,
-    salt: input.salt,
-  });
+  const assembled = await client.deploy(
+    {
+      owner: input.owner,
+      salt: input.salt,
+    },
+    { restore: false },
+  );
 
   const predicted =
     typeof assembled.result === "string" ? assembled.result : undefined;
@@ -142,19 +152,17 @@ export async function buildVaultIssueXdr(input: {
   contentHash: Buffer;
   uri?: string;
 }): Promise<{ unsignedXdr: string }> {
-  const client = new VcVaultClient({
-    contractId: input.vaultId,
-    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
-    rpcUrl: RPC,
-    publicKey: input.issuer,
-  });
+  const client = new VcVaultClient(clientOpts(input.vaultId, input.issuer));
 
-  const assembled = await client.issue({
-    issuer: input.issuer,
-    vc_id: input.vcId,
-    content_hash: input.contentHash,
-    uri: input.uri ?? undefined,
-  });
+  const assembled = await client.issue(
+    {
+      issuer: input.issuer,
+      vc_id: input.vcId,
+      content_hash: input.contentHash,
+      uri: input.uri ?? undefined,
+    },
+    { restore: false },
+  );
 
   return { unsignedXdr: toUnsignedXdr(assembled) };
 }
@@ -164,19 +172,77 @@ export async function buildVaultRevokeXdr(input: {
   caller: string;
   vcId: Buffer;
 }): Promise<{ unsignedXdr: string }> {
-  const client = new VcVaultClient({
-    contractId: input.vaultId,
-    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
-    rpcUrl: RPC,
-    publicKey: input.caller,
-  });
+  const client = new VcVaultClient(clientOpts(input.vaultId, input.caller));
 
-  const assembled = await client.revoke({
-    caller: input.caller,
-    vc_id: input.vcId,
-  });
+  const assembled = await client.revoke(
+    {
+      caller: input.caller,
+      vc_id: input.vcId,
+    },
+    { restore: false },
+  );
 
   return { unsignedXdr: toUnsignedXdr(assembled) };
+}
+
+function toBigInt(v: unknown): bigint {
+  if (typeof v === "bigint") return v;
+  if (typeof v === "number" && Number.isFinite(v)) return BigInt(Math.trunc(v));
+  if (typeof v === "string" && v.trim() !== "") return BigInt(v);
+  if (v != null && typeof (v as { toString?: () => string }).toString === "function") {
+    const s = String(v);
+    if (/^-?\d+$/.test(s)) return BigInt(s);
+  }
+  return 0n;
+}
+
+export type FactoryFeeQuote = {
+  amount: bigint;
+  token: string | null;
+  recipient: string | null;
+};
+
+/** Read factory fee config (simulation). */
+export async function getFactoryFee(
+  factoryId: string,
+): Promise<FactoryFeeQuote> {
+  const client = new VcVaultFactoryClient(clientOpts(factoryId));
+  const assembled = await client.get_fee({ restore: false });
+  const fee = assembled.result as
+    | { amount?: unknown; token?: string | null; recipient?: string | null }
+    | undefined;
+  return {
+    amount: toBigInt(fee?.amount),
+    token: fee?.token ?? null,
+    recipient: fee?.recipient ?? null,
+  };
+}
+
+/** Build XDR for `collect_issue_fee` (no-op when amount is 0 on-chain). */
+export async function buildCollectIssueFeeXdr(input: {
+  factoryId: string;
+  payer: string;
+}): Promise<{ unsignedXdr: string }> {
+  const client = new VcVaultFactoryClient(
+    clientOpts(input.factoryId, input.payer),
+  );
+  const assembled = await client.collect_issue_fee(
+    { payer: input.payer },
+    { restore: false },
+  );
+  return { unsignedXdr: toUnsignedXdr(assembled) };
+}
+
+/** USDC-style 7 decimals → display string. */
+export function formatTokenAmount(amount: bigint, decimals = 7): string {
+  const neg = amount < 0n;
+  const abs = neg ? -amount : amount;
+  const base = 10n ** BigInt(decimals);
+  const whole = abs / base;
+  const frac = abs % base;
+  const fracStr = frac.toString().padStart(decimals, "0").replace(/0+$/, "");
+  const body = fracStr ? `${whole}.${fracStr}` : whole.toString();
+  return neg ? `-${body}` : body;
 }
 
 export async function verifyVcOnChain(input: {
@@ -185,16 +251,14 @@ export async function verifyVcOnChain(input: {
   contentHash: Buffer;
 }): Promise<boolean | null> {
   try {
-    const client = new VcVaultClient({
-      contractId: input.vaultId,
-      networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
-      rpcUrl: RPC,
-      publicKey: "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF",
-    });
-    const assembled = await client.verify_vc({
-      vc_id: input.vcId,
-      content_hash: input.contentHash,
-    });
+    const client = new VcVaultClient(clientOpts(input.vaultId));
+    const assembled = await client.verify_vc(
+      {
+        vc_id: input.vcId,
+        content_hash: input.contentHash,
+      },
+      { restore: false },
+    );
     return typeof assembled.result === "boolean" ? assembled.result : null;
   } catch {
     return null;

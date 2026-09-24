@@ -16,10 +16,18 @@ Contract IDs are recorded here after `stellar contract deploy` (ALF-025).
 Network passphrase: `Test SDF Network ; September 2015`  
 Deployer / admin: `alfred-deployer` → `GBFT6GJIARFHVGP2MUSFFFZHV62IED6KPNX7H4ANJBW5QS2NE4JP5O4J`
 
-Issue fee: **disabled on-chain** (`quote_issue_fee = 0`).  
-Script ready: `contracts/scripts/set-usdc-fee.ps1` (Circle testnet USDC SAC  
-`CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`, default **0.1 USDC**).  
-Run when you want fees live; issuers need USDC + trustline.
+Issue fee: **disabled on-chain** (`quote_issue_fee = 0`) during dogfood.  
+App path (ALF-023b): `GET /api/fees/quote` + `prepare-issue` returns `fee` + optional `feeCollectXdr`.  
+Enable later:
+
+```powershell
+cd contracts
+.\scripts\set-usdc-fee.ps1              # 0.1 USDC
+.\scripts\set-usdc-fee.ps1 -Amount 0    # disable again
+```
+
+Circle testnet USDC SAC: `CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA`.  
+Issuers need USDC trustline + balance; Pollar Auth Policy must allow `collect_issue_fee` (+ SAC transfer).
 
 ### Links
 

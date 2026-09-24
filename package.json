@@ -9,6 +9,7 @@
     "typecheck": "turbo run typecheck",
     "dev:web": "pnpm --filter @alfred/web dev",
     "dev:api": "pnpm --filter @alfred/api dev",
+    "test:e2e": "pnpm --filter @alfred/web test:e2e",
     "contracts:build": "powershell -File contracts/scripts/build.ps1",
     "contracts:test": "cd contracts && cargo test --workspace",
     "deploy:api": "pnpm --filter @alfred/api run deploy"

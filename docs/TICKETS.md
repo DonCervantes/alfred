@@ -27,14 +27,14 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
 | **ALF-001** | Completar decisiones de producto (MVP, red, Pollar, dominio, locale) | P0 | Done | — |
-| **ALF-002** | Crear app Pollar (testnet) + keys + domains + auth + deferred + USDC | P0 | Done (branding pendiente) | ALF-001 |
+| **ALF-002** | Crear app Pollar (testnet) + keys + domains + auth + deferred + USDC | P0 | Done | ALF-001 |
 | **ALF-002b** | Webhook / evento de activación deferred (`POST /api/activate`) | P0 | Done | ALF-002 |
 | **ALF-002c** | Activar Passkey / C-accounts en Pollar cuando el dashboard lo ofrezca | P2 | Backlog | ALF-002 |
-| **ALF-002d** | Branding modal Pollar (ALFRED, accent #0071E3, logo) | P2 | Todo | ALF-002 |
+| **ALF-002d** | Branding modal Pollar (ALFRED, accent #0071E3, logo) | P2 | Done | ALF-002 |
 | **ALF-003** | Instalar Stellar CLI + generar `alfred-deployer` + Friendbot | P0 | Done | — |
 | **ALF-004** | Cuenta Cloudflare + `wrangler login` + proyecto vacío Pages/Worker | P0 | Done | — |
-| **ALF-005** | Crear espacio GitBook + estructura índice | P1 | Todo | ALF-001 |
-| **ALF-006** | Assets de marca v0 (wordmark, colores, favicon) | P1 | Todo | ALF-001 |
+| **ALF-005** | Crear espacio GitBook + estructura índice | P1 | Done | ALF-001 |
+| **ALF-006** | Assets de marca v0 (wordmark, colores, favicon) | P1 | Done | ALF-001 |
 
 ---
 
@@ -47,7 +47,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-012** | Config Pages/Vite React + Tailwind v4 + tokens Apple-like | P0 | Done | ALF-010 |
 | **ALF-013** | i18n ES/EN (diccionarios + switcher) | P0 | Done | ALF-012 |
 | **ALF-014** | `.env.example` + Secrets map (Pollar, Session, Stellar IDs) | P0 | Done | ALF-002, ALF-010 |
-| **ALF-015** | CI GitHub Actions: lint + typecheck (skeleton) | P1 | Blocked | ALF-010 |
+| **ALF-015** | CI GitHub Actions: lint + typecheck (skeleton) | P1 | Done | ALF-010 |
 
 ---
 
@@ -59,7 +59,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-021** | Implement DID register/update/get/deactivate | P0 | Done | ALF-020 |
 | **ALF-022** | Workspace: `alfred-vc-vault` issue/revoke/get/list/verify | P0 | Done | ALF-020 |
 | **ALF-023** | Workspace: `alfred-vc-vault-factory` deploy/is_vault + **fee USDC** | P0 | Done (fee=0) | ALF-022 |
-| **ALF-023b** | Config testnet: USDC trustline, `set_fee_*`, quote en issue flow | P0 | Partial (script) | ALF-023, ALF-025 |
+| **ALF-023b** | Config testnet: USDC trustline, `set_fee_*`, quote en issue flow | P0 | Done (fee=0 live) | ALF-023, ALF-025 |
 | **ALF-024** | Scripts `build` + `deploy` vía Stellar CLI | P0 | Done | ALF-021, ALF-023 |
 | **ALF-025** | Deploy testnet + documentar IDs en `docs/deployments/testnet.md` | P0 | Done | ALF-003, ALF-024 |
 | **ALF-026** | Generar TypeScript bindings → `packages/stellar` | P0 | Done | ALF-025 |
@@ -76,7 +76,7 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-033** | Endpoints DID register + Vault deploy (preparar XDR) | P0 | Done | ALF-026, ALF-032 |
 | **ALF-034** | Issue/list/revoke + encrypt R2 + hash on-chain | P0 | Done | ALF-033 |
 | **ALF-035** | Presentation links + `GET /api/verify/:token` público | P0 | Done | ALF-034 |
-| **ALF-036** | Rate limits + CSP básicos | P1 | Blocked | ALF-031 |
+| **ALF-036** | Rate limits + CSP básicos | P1 | Done | ALF-031 |
 
 ---
 
@@ -84,13 +84,13 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
-| **ALF-040** | Landing marketing (brand hero + 1 CTA) | P0 | Blocked | ALF-013 |
+| **ALF-040** | Landing marketing (brand hero + 1 CTA) | P0 | Done | ALF-013 |
 | **ALF-041** | First-run wizard: Create my ALFRED (DID+Vault) | P0 | Done | ALF-033, ALF-030 |
 | **ALF-042** | Vault list + empty state + detail | P0 | Done | ALF-034 |
 | **ALF-043** | Flujo Issue (issuer) | P0 | Done | ALF-034 |
 | **ALF-044** | Public verify `/v/:token` | P0 | Done | ALF-035 |
-| **ALF-045** | Motion (page fade, success check, sheet) + a11y pass | P1 | Blocked | ALF-040–044 |
-| **ALF-046** | Settings: locale ES/EN + logout | P1 | Blocked | ALF-032 |
+| **ALF-045** | Motion (page fade, success check, sheet) + a11y pass | P1 | Done | ALF-040–044 |
+| **ALF-046** | Settings: locale ES/EN + logout | P1 | Done | ALF-032 |
 
 ---
 
@@ -98,11 +98,11 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
-| **ALF-050** | Publicar GitBook: quickstart + protocol excerpt | P1 | Blocked | ALF-005, ALF-025 |
-| **ALF-051** | Playwright smoke (signin mock / verify page) | P1 | Blocked | ALF-044 |
-| **ALF-052** | Threat model v0 + runbook operador | P1 | Blocked | ALF-034 |
-| **ALF-053** | Dogfood testnet con 5 usuarios | P0 | Blocked | ALF-041–044 |
-| **ALF-054** | Freeze pitch deck + whitepaper v1 (copy final) | P2 | Blocked | ALF-053 |
+| **ALF-050** | Publicar GitBook: quickstart + protocol excerpt | P1 | Done | ALF-005, ALF-025 |
+| **ALF-051** | Playwright smoke (signin mock / verify page) | P1 | Done | ALF-044 |
+| **ALF-052** | Threat model v0 + runbook operador | P1 | Done | ALF-034 |
+| **ALF-053** | Dogfood testnet con 5 usuarios | P0 | Done | ALF-041–044 |
+| **ALF-054** | Freeze pitch deck + whitepaper v1 (copy final) | P2 | Done | ALF-053 |
 
 ---
 
@@ -115,21 +115,32 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
-| **ALF-060** | Plantillas de credencial (tipos + schema JSON reutilizable) | P2 | Backlog | ALF-053 |
-| **ALF-061** | Dashboard issuer: historial de emisiones + filtros | P2 | Backlog | ALF-060 |
-| **ALF-062** | Gestión de issuers (allowlist / roles org) | P2 | Backlog | ALF-061 |
-| **ALF-063** | Revocación batch + motivo de revoke | P2 | Backlog | ALF-061 |
-| **ALF-064** | Export CSV / audit log de emisiones | P2 | Backlog | ALF-061 |
+| **ALF-060** | Plantillas de credencial (tipos + schema JSON reutilizable) | P2 | Done | ALF-053 |
+| **ALF-061** | Dashboard issuer: historial de emisiones + filtros | P2 | Done | ALF-060 |
+| **ALF-062** | Gestión de issuers (allowlist / roles org) | P2 | Done | ALF-061 |
+| **ALF-063** | Revocación batch + motivo de revoke | P2 | Done | ALF-061 |
+| **ALF-064** | Export CSV / audit log de emisiones | P2 | Done | ALF-061 |
 
 ### 6b — Opción C: Producto vertical (ej. historial crediticio)
 
 | ID | Título | P | Status | Depends |
 |----|--------|---|--------|---------|
-| **ALF-070** | Elegir vertical + PRD corto (credit / employment / education) | P2 | Backlog | ALF-053 |
-| **ALF-071** | App vertical scaffold (`apps/<vertical>`) sobre vault ALFRED | P2 | Backlog | ALF-070 |
-| **ALF-072** | Flujos holder del vertical (list / share / verify UX) | P2 | Backlog | ALF-071 |
-| **ALF-073** | Modo mock + modo real (como products-acta credit-history) | P2 | Backlog | ALF-072 |
-| **ALF-074** | Landing del vertical + copy ES/EN | P2 | Backlog | ALF-072 |
+| **ALF-070** | Elegir vertical + PRD corto (credit / employment / education) | P2 | Done | ALF-053 |
+| **ALF-071** | App vertical scaffold (`apps/<vertical>`) sobre vault ALFRED | P2 | Done | ALF-070 |
+| **ALF-072** | Flujos holder del vertical (list / share / verify UX) | P2 | Done | ALF-071 |
+| **ALF-073** | Modo mock + modo real (como products-acta credit-history) | P2 | Done | ALF-072 |
+| **ALF-074** | Landing del vertical + copy ES/EN | P2 | Done | ALF-072 |
+
+### 6c — Opción D: Sellado / firma de documentos
+
+> Hash off-chain del archivo + ancla on-chain (VC / vault). No sustituye validez legal automática.
+
+| ID | Título | P | Status | Depends |
+|----|--------|---|--------|---------|
+| **ALF-080** | PRD: firmar/sellar documentos (hash + claims + UX) | P2 | Done | ALF-053 |
+| **ALF-081** | Upload + hash (SHA-256) + blob cifrado; claim `documentHash` en issue | P2 | Done | ALF-080 |
+| **ALF-082** | Verify: re-hash de archivo vs commitment + status vault | P2 | Done | ALF-081 |
+| **ALF-083** | (Opcional) Firma detachada Ed25519 del hash con G-key Pollar | P2 | Done | ALF-081 |
 
 ---
 
@@ -144,7 +155,7 @@ ALF-001 (preguntas)
   → ALF-030…035 (API)
   → ALF-040…044 (UI)
   → ALF-053 (dogfood)
-  → (si hay tiempo) ALF-060…064 (B) → ALF-070…074 (C)
+  → (si hay tiempo) ALF-060…064 (B) → ALF-070…074 (C) → ALF-080…083 (D)
 ```
 
 ## Cómo usar estos tickets

@@ -104,15 +104,34 @@ Treasury → **Tokens & Trustlines**
 
 ---
 
-## Step 8 — Branding (Apple-like / ALFRED) — PENDIENTE
+## Step 8 — Branding (Apple-like / ALFRED) — ALF-002d
 
-Build → **Branding**
+Build → **Branding** (or Appearance) in [dashboard.pollar.xyz](https://dashboard.pollar.xyz)
 
-- [ ] Nombre visible: **ALFRED**
-- [ ] Accent ≈ `#0071E3`
-- [ ] Logo cuando lo tengas
+Set these exact values (Pollar serves them via `/applications/config` on each page load):
 
-**⏭ Saltado a propósito** — no bloquea el build. Ticket: branding Pollar modal.
+| Field | Value |
+|-------|--------|
+| App / display name | `ALFRED` |
+| Accent color | `#0071E3` |
+| Theme | Light |
+| Logo URL | `https://alfred-web-283.pages.dev/alfred-mark.svg` |
+
+Repo assets (also under `apps/web/public/`):
+
+- Mark: `/alfred-mark.svg`
+- Wordmark: `/alfred-wordmark.svg`
+- Favicon: `/favicon.svg`
+
+**Do not** override branding with a local `appConfig` in `PollarProvider` unless you also copy every login provider + chains from the dashboard — a partial config turns off Google/GitHub.
+
+- [x] Nombre visible: **ALFRED**
+- [x] Accent: **`#0071E3`**
+- [x] Logo URL pegada (mark arriba)
+
+After save: hard-refresh the app and open Continuar → Pollar modal should show ALFRED + blue accent.
+
+**✓ Step 8 listo** (2026-09-24 — personalizado en dashboard).
 
 ---
 
@@ -127,7 +146,7 @@ Build → **Branding**
 | 5 Chains (G; C pending Passkey) | ✓ |
 | 6 Deferred funding | ✓ |
 | 7 USDC trustline | ✓ |
-| 8 Branding | **Pendiente** |
+| 8 Branding | ✓ (dashboard) |
 
 ---
 

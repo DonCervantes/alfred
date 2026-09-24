@@ -13,12 +13,36 @@ type VerifyResult = {
   holderDid?: string | null;
   holderAddress?: string | null;
   issuedAt?: string;
+  network?: string;
   payload?: {
     claims?: Record<string, unknown>;
     type?: string;
+    issuedAt?: string;
   } | null;
   code?: string;
 };
+
+function truncateMid(value: string, head = 18, tail = 8) {
+  if (value.length <= head + tail + 1) return value;
+  return `${value.slice(0, head)}…${value.slice(-tail)}`;
+}
+
+function formatIssuedAt(iso: string | undefined, locale: string) {
+  if (!iso) return null;
+  const d = Date.parse(iso);
+  if (Number.isNaN(d)) return iso;
+  return new Intl.DateTimeFormat(locale === "es" ? "es-MX" : "en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(d);
+}
+
+function claimEntries(claims: Record<string, unknown> | undefined) {
+  if (!claims) return [];
+  return Object.entries(claims).filter(
+    ([, v]) => v !== undefined && v !== null && String(v).trim() !== "",
+  );
+}
 
 export function VerifyPage() {
   const { token } = useParams<{ token: string }>();
@@ -26,6 +50,7 @@ export function VerifyPage() {
   const [data, setData] = useState<VerifyResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [entered, setEntered] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -33,6 +58,7 @@ export function VerifyPage() {
     void (async () => {
       setLoading(true);
       setError(null);
+      setEntered(false);
       try {
         const res = await fetch(`${API_URL}/api/verify/${token}`);
         const json = (await res.json()) as VerifyResult;
@@ -42,6 +68,7 @@ export function VerifyPage() {
           setData(null);
         } else {
           setData(json);
+          requestAnimationFrame(() => setEntered(true));
         }
       } catch {
         if (!cancelled) setError(tr("verify.failed"));
@@ -54,6 +81,14 @@ export function VerifyPage() {
     };
   }, [token, tr]);
 
+  const isValid =
+    data?.status === "valid" && data.onChainValid !== false;
+  const claims = claimEntries(data?.payload?.claims);
+  const issuedLabel = formatIssuedAt(
+    data?.payload?.issuedAt ?? data?.issuedAt,
+    locale,
+  );
+
   return (
     <main className="relative min-h-screen overflow-hidden">
       <div
@@ -61,112 +96,200 @@ export function VerifyPage() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 600px at 50% -10%, rgba(0,113,227,0.10), transparent 55%), linear-gradient(180deg, #ffffff 0%, #f5f5f7 55%, #ececf0 100%)",
+            "radial-gradient(900px 480px at 50% -8%, rgba(0,113,227,0.14), transparent 58%), radial-gradient(700px 400px at 80% 90%, rgba(52,199,89,0.08), transparent 50%), linear-gradient(180deg, #ffffff 0%, #f5f5f7 52%, #ebebef 100%)",
         }}
       />
-      <header className="relative z-10 flex items-center justify-end gap-2 px-6 py-5 sm:px-10">
-        <button
-          type="button"
-          onClick={() => setLocale("es")}
-          className={`rounded-full px-3 py-1 text-sm transition ${
-            locale === "es"
-              ? "bg-[var(--text)] text-white"
-              : "text-[var(--text-secondary)] hover:text-[var(--text)]"
-          }`}
-        >
-          ES
-        </button>
-        <button
-          type="button"
-          onClick={() => setLocale("en")}
-          className={`rounded-full px-3 py-1 text-sm transition ${
-            locale === "en"
-              ? "bg-[var(--text)] text-white"
-              : "text-[var(--text-secondary)] hover:text-[var(--text)]"
-          }`}
-        >
-          EN
-        </button>
-      </header>
 
-      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] max-w-lg flex-col items-center justify-center px-6 pb-24 text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-[var(--text)]">
-          {tr("verify.title")}
-        </h1>
-        <p className="mt-3 text-sm text-[var(--text-secondary)]">
-          {tr("verify.supporting")}
-        </p>
-
-        <div className="mt-8 w-full rounded-[var(--radius)] bg-[var(--surface)] px-5 py-5 text-left shadow-sm ring-1 ring-black/5">
-          {loading ? (
-            <p className="text-sm text-[var(--text-secondary)]">
-              {tr("verify.loading")}
-            </p>
-          ) : error ? (
-            <p className="text-sm text-[var(--danger)]" role="alert">
-              {error}
-            </p>
-          ) : data ? (
-            <div className="space-y-3 text-sm">
-              <Row label={tr("verify.status")} value={data.status ?? "—"} />
-              <Row label={tr("verify.type")} value={data.type ?? "—"} />
-              <Row
-                label={tr("verify.onChain")}
-                value={
-                  data.onChainValid === true
-                    ? tr("verify.valid")
-                    : data.onChainValid === false
-                      ? tr("verify.invalid")
-                      : tr("verify.unknown")
-                }
-              />
-              {data.holderDid ? (
-                <Row label={tr("verify.holderDid")} value={data.holderDid} mono />
-              ) : null}
-              {data.payload?.claims ? (
-                <div>
-                  <p className="text-xs tracking-wide text-[var(--text-secondary)] uppercase">
-                    {tr("verify.claims")}
-                  </p>
-                  <pre className="mt-1 overflow-x-auto rounded bg-black/[0.03] p-3 font-mono text-[11px] text-[var(--text)]">
-                    {JSON.stringify(data.payload.claims, null, 2)}
-                  </pre>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
-
+      <header className="relative z-10 flex items-center justify-between px-6 py-5 sm:px-10">
         <a
           href="/"
-          className="mt-8 text-sm text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text)] hover:underline"
+          className="text-[15px] font-semibold tracking-tight text-[var(--text)]"
         >
           {tr("brand.name")}
         </a>
+        <div className="flex gap-1">
+          <button
+            type="button"
+            onClick={() => setLocale("es")}
+            className={`rounded-full px-3 py-1 text-sm transition ${
+              locale === "es"
+                ? "bg-[var(--text)] text-white"
+                : "text-[var(--text-secondary)] hover:text-[var(--text)]"
+            }`}
+          >
+            ES
+          </button>
+          <button
+            type="button"
+            onClick={() => setLocale("en")}
+            className={`rounded-full px-3 py-1 text-sm transition ${
+              locale === "en"
+                ? "bg-[var(--text)] text-white"
+                : "text-[var(--text-secondary)] hover:text-[var(--text)]"
+            }`}
+          >
+            EN
+          </button>
+        </div>
+      </header>
+
+      <section className="relative z-10 mx-auto flex min-h-[calc(100vh-5rem)] max-w-md flex-col items-center justify-center px-6 pb-20">
+        {loading ? (
+          <p className="animate-pulse text-sm text-[var(--text-secondary)]">
+            {tr("verify.loading")}
+          </p>
+        ) : error ? (
+          <div className="w-full text-center">
+            <p className="text-5xl font-semibold tracking-tight text-[var(--text)]">
+              {tr("brand.name")}
+            </p>
+            <p className="mt-8 text-lg font-medium text-[var(--danger)]" role="alert">
+              {tr("verify.failed")}
+            </p>
+            <p className="mt-2 text-sm text-[var(--text-secondary)]">{error}</p>
+          </div>
+        ) : data ? (
+          <div
+            className={`w-full transition duration-700 ease-out ${
+              entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+            }`}
+          >
+            <div className="text-center">
+              <p className="text-[11px] font-medium tracking-[0.2em] text-[var(--text-secondary)] uppercase">
+                {tr("verify.badge")}
+              </p>
+              <h1 className="mt-3 text-5xl font-semibold tracking-tight text-[var(--text)] sm:text-6xl">
+                {tr("brand.name")}
+              </h1>
+              <p className="mt-3 text-base text-[var(--text-secondary)]">
+                {tr("verify.supporting")}
+              </p>
+            </div>
+
+            <div className="mt-10 flex flex-col items-center">
+              <div
+                className={`flex h-16 w-16 items-center justify-center rounded-full transition delay-150 duration-500 ${
+                  entered ? "scale-100 opacity-100" : "scale-75 opacity-0"
+                } ${
+                  isValid
+                    ? "bg-[var(--success)]/15 text-[var(--success)]"
+                    : "bg-[var(--danger)]/12 text-[var(--danger)]"
+                }`}
+                aria-hidden
+              >
+                {isValid ? (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M5 12.5l4.5 4.5L19 7.5"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                    <path
+                      d="M7 7l10 10M17 7L7 17"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                )}
+              </div>
+              <p
+                className={`mt-4 text-2xl font-semibold tracking-tight ${
+                  isValid ? "text-[var(--success)]" : "text-[var(--danger)]"
+                }`}
+              >
+                {isValid ? tr("verify.verdictOk") : tr("verify.verdictBad")}
+              </p>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                {data.type || "AlfredCredential"}
+                {data.onChainValid === true
+                  ? ` · ${tr("verify.onChainOk")}`
+                  : data.onChainValid === false
+                    ? ` · ${tr("verify.onChainBad")}`
+                    : ""}
+              </p>
+            </div>
+
+            <div className="mt-10 space-y-6 text-left">
+              {claims.length > 0 ? (
+                <div>
+                  <p className="text-[11px] font-medium tracking-[0.18em] text-[var(--text-secondary)] uppercase">
+                    {tr("verify.claims")}
+                  </p>
+                  <dl className="mt-3 divide-y divide-black/5 border-y border-black/5">
+                    {claims.map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="flex items-baseline justify-between gap-4 py-3"
+                      >
+                        <dt className="shrink-0 text-sm text-[var(--text-secondary)] capitalize">
+                          {key}
+                        </dt>
+                        <dd className="text-right text-sm font-medium text-[var(--text)] break-words">
+                          {typeof value === "string" || typeof value === "number"
+                            ? String(value)
+                            : JSON.stringify(value)}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+              ) : null}
+
+              <div>
+                <p className="text-[11px] font-medium tracking-[0.18em] text-[var(--text-secondary)] uppercase">
+                  {tr("verify.details")}
+                </p>
+                <dl className="mt-3 space-y-3">
+                  {data.holderDid ? (
+                    <Detail
+                      label={tr("verify.holderDid")}
+                      value={truncateMid(data.holderDid, 22, 10)}
+                      title={data.holderDid}
+                    />
+                  ) : null}
+                  {issuedLabel ? (
+                    <Detail label={tr("verify.issuedAt")} value={issuedLabel} />
+                  ) : null}
+                  {data.network ? (
+                    <Detail
+                      label={tr("verify.network")}
+                      value={data.network}
+                    />
+                  ) : null}
+                </dl>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </section>
     </main>
   );
 }
 
-function Row({
+function Detail({
   label,
   value,
-  mono,
+  title,
 }: {
   label: string;
   value: string;
-  mono?: boolean;
+  title?: string;
 }) {
   return (
     <div>
-      <p className="text-xs tracking-wide text-[var(--text-secondary)] uppercase">
-        {label}
-      </p>
-      <p
-        className={`mt-0.5 break-all text-[var(--text)] ${mono ? "font-mono text-xs" : ""}`}
+      <dt className="text-xs text-[var(--text-secondary)]">{label}</dt>
+      <dd
+        className="mt-0.5 font-mono text-[12px] leading-relaxed text-[var(--text)]"
+        title={title}
       >
         {value}
-      </p>
+      </dd>
     </div>
   );
 }
