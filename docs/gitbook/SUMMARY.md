@@ -11,6 +11,8 @@
 
 * [Overview](product/README.md)
 * [Roles (holder / issuer / verifier)](product/roles.md)
+* [Education vertical](product/education.md)
+* [Document seal](product/document-seal.md)
 
 ## Protocol
 
@@ -23,6 +25,11 @@
 
 * [Trust model](security/README.md)
 * [Threat model v0](security/threat-model.md)
+
+## Legal (draft)
+
+* [Privacy Policy](legal/privacy.md)
+* [Terms of Use](legal/terms.md)
 
 ## Reference
 

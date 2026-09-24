@@ -4,7 +4,7 @@
 
 ## Product / legal
 
-- [ ] Privacy Policy + Terms published and linked from web
+- [ ] Privacy Policy + Terms published and linked from web (drafts: `/privacy`, `/terms` — counsel before mainnet)
 - [ ] Jurisdiction / entity decided
 - [ ] No PII in cleartext on-chain (hashes / ciphertext only) — re-audit issue claims
 

@@ -469,6 +469,21 @@ function Shell({
       </header>
 
       {children}
+
+      <footer className="relative z-10 flex flex-wrap items-center justify-center gap-4 px-6 py-8 text-sm text-[var(--text-secondary)]">
+        <Link
+          to="/privacy"
+          className="underline-offset-4 hover:text-[var(--text)] hover:underline"
+        >
+          {tr("nav.privacy")}
+        </Link>
+        <Link
+          to="/terms"
+          className="underline-offset-4 hover:text-[var(--text)] hover:underline"
+        >
+          {tr("nav.terms")}
+        </Link>
+      </footer>
     </main>
   );
 }

@@ -7,6 +7,30 @@ export const es = {
   "home.supporting":
     "Credenciales verificables, con la calma de un producto que sí entiendes.",
   "nav.education": "Educación",
+  "nav.privacy": "Privacidad",
+  "nav.terms": "Términos",
+  "legal.draftBadge": "Borrador · Testnet",
+  "legal.updated": "Actualizado: 2026-09-24",
+  "legal.notAdvice":
+    "No es asesoría legal. Sustituir por texto revisado por abogado antes de mainnet.",
+  "legal.privacyTitle": "Política de privacidad",
+  "legal.termsTitle": "Términos de uso",
+  "legal.privacy.p1":
+    "ALFRED trata datos de inicio de sesión Pollar, tu dirección Stellar, DID, vault, metadatos de credenciales y payloads cifrados para operar la app en testnet.",
+  "legal.privacy.p2":
+    "No escribimos PII en claro on-chain. El ledger guarda identificadores, estado y hashes. El ciphertext vive en D1 (Cloudflare).",
+  "legal.privacy.p3":
+    "Las sesiones duran unos siete días. Los enlaces de presentación expiran (~72 h). Pollar y la red Stellar tienen sus propias políticas.",
+  "legal.privacy.p4":
+    "Puedes cerrar sesión o dejar de usar el preview. Los datos on-chain no se borran del ledger público.",
+  "legal.terms.p1":
+    "ALFRED en testnet es experimental. Las funciones pueden cambiar, fallar o perder datos sin aviso.",
+  "legal.terms.p2":
+    "El servicio se ofrece tal cual. El sellado de documento es un compromiso de hash, no una firma electrónica cualificada.",
+  "legal.terms.p3":
+    "No abuses del API, no evadas rate limits ni emitas credenciales para engañar a terceros.",
+  "legal.terms.p4":
+    "Los fees de emisión siguen la factory (ahora en 0 en dogfood). Tú respondes por fees de red cuando apliquen.",
   "auth.signedIn": "Sesión iniciada",
   "auth.wallet": "Tu billetera Stellar",
   "auth.deferred":

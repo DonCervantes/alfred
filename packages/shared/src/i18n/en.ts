@@ -7,6 +7,30 @@ export const en = {
   "home.supporting":
     "Verifiable credentials, with the calm of a product you already understand.",
   "nav.education": "Education",
+  "nav.privacy": "Privacy",
+  "nav.terms": "Terms",
+  "legal.draftBadge": "Draft · Testnet",
+  "legal.updated": "Last updated: 2026-09-24",
+  "legal.notAdvice":
+    "Not legal advice. Replace with counsel-reviewed text before mainnet.",
+  "legal.privacyTitle": "Privacy Policy",
+  "legal.termsTitle": "Terms of Use",
+  "legal.privacy.p1":
+    "ALFRED processes Pollar sign-in data, your Stellar address, DID, vault ID, credential metadata, and encrypted claim payloads to run the testnet app.",
+  "legal.privacy.p2":
+    "Cleartext PII is not written on-chain. The ledger holds identifiers, status, and hashes. Ciphertext lives in our Cloudflare D1 store.",
+  "legal.privacy.p3":
+    "Sessions last about seven days. Presentation links expire (default ~72 hours). Pollar and the Stellar network have their own policies.",
+  "legal.privacy.p4":
+    "You may sign out or stop using the preview. On-chain data cannot be erased from the public ledger.",
+  "legal.terms.p1":
+    "ALFRED on testnet is experimental. Features may change, break, or lose data without notice.",
+  "legal.terms.p2":
+    "The service is provided as is. Document seal is a hash commitment, not a qualified electronic signature.",
+  "legal.terms.p3":
+    "Do not abuse the API, bypass rate limits, or issue credentials to deceive others.",
+  "legal.terms.p4":
+    "Issuance fees follow the vault factory config (currently off on dogfood). You are responsible for network fees when applicable.",
   "auth.signedIn": "Signed in",
   "auth.wallet": "Your Stellar wallet",
   "auth.deferred":

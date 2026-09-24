@@ -182,6 +182,15 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 ---
 
+## Epic 10 — Docs sync + legal drafts
+
+| ID | Título | P | Status | Depends |
+|----|--------|---|--------|---------|
+| **ALF-120** | GitBook: edu, seal→issue, fees off, session hardening | P1 | Done | ALF-050 |
+| **ALF-121** | Privacy Policy + Terms borrador (testnet) + rutas web | P1 | Done | ALF-054 |
+
+---
+
 ## Orden de ataque recomendado (Sprint 0 → 1)
 
 ```
