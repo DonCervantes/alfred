@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
 import { SignInSheet } from "../components/SignInSheet";
 import { CreateAlfredWizard } from "../components/CreateAlfredWizard";
+import { VaultPanel } from "../components/VaultPanel";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8787";
 
@@ -258,6 +259,14 @@ function HomeWithPollar() {
                   void refreshProfile();
                 }}
               />
+            ) : null}
+
+            {sessionReady &&
+            profile &&
+            !profile.needsOnboarding &&
+            profile.vaultAddress &&
+            wallet?.address ? (
+              <VaultPanel selfAddress={wallet.address} />
             ) : null}
 
             {!activated ? (

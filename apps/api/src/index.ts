@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { authRoutes } from "./routes/auth";
+import { credentialsRoutes } from "./routes/credentials";
 import { didRoutes } from "./routes/did";
 import { vaultRoutes } from "./routes/vault";
+import { verifyRoutes } from "./routes/verify";
 
 type Bindings = {
   STELLAR_NETWORK: string;
@@ -11,6 +13,7 @@ type Bindings = {
   STELLAR_USDC_SAC?: string;
   POLLAR_SECRET_KEY?: string;
   SESSION_SECRET?: string;
+  CREDENTIAL_ENCRYPTION_KEY?: string;
   DB?: D1Database;
   VC_BLOBS?: R2Bucket;
 };
@@ -72,6 +75,8 @@ app.get("/api/health", async (c) => {
 app.route("/api/auth", authRoutes);
 app.route("/api/did", didRoutes);
 app.route("/api/vault", vaultRoutes);
+app.route("/api/credentials", credentialsRoutes);
+app.route("/api/verify", verifyRoutes);
 
 function clientStatus(upstream: number): 400 | 401 | 402 | 403 | 404 | 409 | 500 | 503 {
   if (

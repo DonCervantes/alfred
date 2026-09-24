@@ -3,6 +3,7 @@
 import { Buffer } from "buffer";
 import {
   DidRegistryClient,
+  VcVaultClient,
   VcVaultFactoryClient,
   NETWORK_PASSPHRASE_TESTNET,
 } from "@alfred/stellar";
@@ -44,7 +45,8 @@ function toUnsignedXdr(assembled: {
   toXDR?: () => string;
   result?: unknown;
   error?: { message?: string } | null;
-  simulation?: { error?: string } | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  simulation?: any;
 }): string {
   if (assembled.simulation?.error) {
     throw new Error(assembled.simulation.error);
@@ -131,4 +133,75 @@ export async function buildVaultDeployXdr(input: {
     saltHex: bytesToHex(input.salt),
     predictedVault: predicted,
   };
+}
+
+export async function buildVaultIssueXdr(input: {
+  vaultId: string;
+  issuer: string;
+  vcId: Buffer;
+  contentHash: Buffer;
+  uri?: string;
+}): Promise<{ unsignedXdr: string }> {
+  const client = new VcVaultClient({
+    contractId: input.vaultId,
+    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
+    rpcUrl: RPC,
+    publicKey: input.issuer,
+  });
+
+  const assembled = await client.issue({
+    issuer: input.issuer,
+    vc_id: input.vcId,
+    content_hash: input.contentHash,
+    uri: input.uri ?? undefined,
+  });
+
+  return { unsignedXdr: toUnsignedXdr(assembled) };
+}
+
+export async function buildVaultRevokeXdr(input: {
+  vaultId: string;
+  caller: string;
+  vcId: Buffer;
+}): Promise<{ unsignedXdr: string }> {
+  const client = new VcVaultClient({
+    contractId: input.vaultId,
+    networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
+    rpcUrl: RPC,
+    publicKey: input.caller,
+  });
+
+  const assembled = await client.revoke({
+    caller: input.caller,
+    vc_id: input.vcId,
+  });
+
+  return { unsignedXdr: toUnsignedXdr(assembled) };
+}
+
+export async function verifyVcOnChain(input: {
+  vaultId: string;
+  vcId: Buffer;
+  contentHash: Buffer;
+}): Promise<boolean | null> {
+  try {
+    const client = new VcVaultClient({
+      contractId: input.vaultId,
+      networkPassphrase: NETWORK_PASSPHRASE_TESTNET,
+      rpcUrl: RPC,
+      publicKey: "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF",
+    });
+    const assembled = await client.verify_vc({
+      vc_id: input.vcId,
+      content_hash: input.contentHash,
+    });
+    return typeof assembled.result === "boolean" ? assembled.result : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Helper: Buffer from Uint8Array for stellar clients. */
+export function u8ToBuffer(u8: Uint8Array): Buffer {
+  return Buffer.from(u8);
 }

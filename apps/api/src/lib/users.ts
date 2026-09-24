@@ -183,3 +183,18 @@ export async function updateUserVault(
     .bind(vaultAddress, userId)
     .run();
 }
+
+export async function getUserByStellarAddress(
+  db: D1Database,
+  stellarAddress: string,
+): Promise<AlfredUser | null> {
+  return (
+    (await db
+      .prepare(
+        `SELECT id, pollar_user_id, stellar_address, did, vault_address, locale
+         FROM users WHERE stellar_address = ?`,
+      )
+      .bind(stellarAddress)
+      .first<AlfredUser>()) ?? null
+  );
+}
