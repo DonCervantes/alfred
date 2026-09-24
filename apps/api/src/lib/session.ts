@@ -1,7 +1,10 @@
-/** Session cookie + HMAC token helpers (ALF-031). */
+/** Session cookie + HMAC token helpers (ALF-031 / ALF-100). */
 
 export const SESSION_COOKIE = "alfred_session";
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 14; // 14 days
+/** Absolute max lifetime of a session cookie (ALF-100: was 14d). */
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
+/** Re-issue cookie when less than this remains (sliding refresh). */
+const SESSION_REFRESH_WITHIN_SECONDS = 60 * 60 * 24 * 3; // 3 days
 
 export type SessionPayload = {
   sid: string;
@@ -99,6 +102,12 @@ export function sessionExpiryUnix(): number {
   return Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
 }
 
+/** True when cookie should be re-signed to extend TTL (sliding). */
+export function shouldRefreshSession(payload: SessionPayload): boolean {
+  const remaining = payload.exp - Math.floor(Date.now() / 1000);
+  return remaining > 0 && remaining < SESSION_REFRESH_WITHIN_SECONDS;
+}
+
 export function sessionCookieValue(token: string): string {
   // Cross-site Pages → Worker requires SameSite=None; Secure
   return `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${SESSION_TTL_SECONDS}`;
@@ -120,4 +129,4 @@ export function readCookie(
   return null;
 }
 
-export { SESSION_TTL_SECONDS };
+export { SESSION_TTL_SECONDS, SESSION_REFRESH_WITHIN_SECONDS };

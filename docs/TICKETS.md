@@ -58,8 +58,8 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-020** | Workspace Rust: `alfred-did-registry` scaffold + tests smoke | P0 | Done | ALF-003, ALF-010 |
 | **ALF-021** | Implement DID register/update/get/deactivate | P0 | Done | ALF-020 |
 | **ALF-022** | Workspace: `alfred-vc-vault` issue/revoke/get/list/verify | P0 | Done | ALF-020 |
-| **ALF-023** | Workspace: `alfred-vc-vault-factory` deploy/is_vault + **fee USDC** | P0 | Done (fee=0) | ALF-022 |
-| **ALF-023b** | Config testnet: USDC trustline, `set_fee_*`, quote en issue flow | P0 | Done (fee=0 live) | ALF-023, ALF-025 |
+| **ALF-023** | Workspace: `alfred-vc-vault-factory` deploy/is_vault + **fee USDC** | P0 | Done | ALF-022 |
+| **ALF-023b** | Config testnet: USDC trustline, `set_fee_*`, quote en issue flow | P0 | Done | ALF-023, ALF-025 |
 | **ALF-024** | Scripts `build` + `deploy` vía Stellar CLI | P0 | Done | ALF-021, ALF-023 |
 | **ALF-025** | Deploy testnet + documentar IDs en `docs/deployments/testnet.md` | P0 | Done | ALF-003, ALF-024 |
 | **ALF-026** | Generar TypeScript bindings → `packages/stellar` | P0 | Done | ALF-025 |
@@ -141,6 +141,32 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 | **ALF-081** | Upload + hash (SHA-256) + blob cifrado; claim `documentHash` en issue | P2 | Done | ALF-080 |
 | **ALF-082** | Verify: re-hash de archivo vs commitment + status vault | P2 | Done | ALF-081 |
 | **ALF-083** | (Opcional) Firma detachada Ed25519 del hash con G-key Pollar | P2 | Done | ALF-081 |
+
+---
+
+## Epic 7 — Hardening testnet
+
+> Post-stretch: fee live, D1 blobs (no R2 purchase), typecheck API, E2E smoke más amplio.
+
+| ID | Título | P | Status | Depends |
+|----|--------|---|--------|---------|
+| **ALF-090** | Fee USDC > 0 en factory testnet + quote/issue smoke | P1 | Done | ALF-023b |
+| **ALF-091** | Blob storage: D1 ciphertext (R2 purchase descartado en testnet) | P1 | Done | ALF-034 |
+| **ALF-092** | Typecheck `@alfred/api` limpio + CI lo corre | P1 | Done | ALF-015 |
+| **ALF-093** | Playwright: `/edu`, fee quote UI, health smoke | P1 | Done | ALF-051 |
+
+---
+
+## Epic 8 — Post-hardening (session, limits, ops)
+
+> Threat-model follow-ups that no dependen de Passkeys ni R2 de pago.
+
+| ID | Título | P | Status | Depends |
+|----|--------|---|--------|---------|
+| **ALF-100** | Session TTL 7d + sliding refresh en `/api/auth/me` | P1 | Done | ALF-031 |
+| **ALF-101** | Rate limit durable (D1) + fallback in-memory | P1 | Done | ALF-036 |
+| **ALF-102** | Rotación `CREDENTIAL_ENCRYPTION_KEY` (+ key previa) | P1 | Done | ALF-034 |
+| **ALF-103** | Checklist mainnet (doc, sin ir live) | P1 | Done | ALF-052 |
 
 ---
 

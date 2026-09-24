@@ -4,9 +4,9 @@ import {
   getTemplateById,
   type CredentialTemplate,
 } from "@alfred/shared";
-import { usePollar } from "@pollar/react";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
+import { useAlfredPollar } from "../providers/pollar-hooks";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8787";
 
@@ -53,7 +53,7 @@ function emptyClaims(template: CredentialTemplate): Record<string, string> {
 
 export function VaultPanel({ selfAddress }: Props) {
   const { tr } = useLocale();
-  const { signAndSubmitTx } = usePollar();
+  const { signAndSubmitTx } = useAlfredPollar();
   const [creds, setCreds] = useState<Cred[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);

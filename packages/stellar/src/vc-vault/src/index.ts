@@ -25,9 +25,10 @@ export * from "@stellar/stellar-sdk";
 export * as contract from "@stellar/stellar-sdk/contract";
 export * as rpc from "@stellar/stellar-sdk/rpc";
 
-if (typeof window !== "undefined") {
+if (typeof globalThis !== "undefined") {
   //@ts-ignore Buffer exists
-  window.Buffer = window.Buffer || Buffer;
+  (globalThis as unknown as { Buffer?: typeof Buffer }).Buffer =
+    (globalThis as unknown as { Buffer?: typeof Buffer }).Buffer || Buffer;
 }
 
 

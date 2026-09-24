@@ -20,6 +20,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @alfred/shared typecheck
+      - run: pnpm --filter @alfred/stellar typecheck
+      - run: pnpm --filter @alfred/api typecheck
       - run: pnpm --filter @alfred/web typecheck
       - run: pnpm --filter @alfred/web build
         env:

@@ -4,11 +4,14 @@
  */
 const NativeRequest = globalThis.Request;
 
+type InitMaybeCache = RequestInit & { cache?: string };
+
 globalThis.Request = class Request extends NativeRequest {
   constructor(input: RequestInfo | URL, init?: RequestInit) {
-    if (init && init.cache === "default") {
-      const { cache: _ignored, ...rest } = init;
-      super(input, rest);
+    const i = init as InitMaybeCache | undefined;
+    if (i && i.cache === "default") {
+      const { cache: _ignored, ...rest } = i;
+      super(input, rest as RequestInit);
     } else {
       super(input, init);
     }
@@ -20,9 +23,10 @@ globalThis.fetch = (
   input: RequestInfo | URL,
   init?: RequestInit,
 ): Promise<Response> => {
-  if (init && init.cache === "default") {
-    const { cache: _ignored, ...rest } = init;
-    return nativeFetch(input, rest);
+  const i = init as InitMaybeCache | undefined;
+  if (i && i.cache === "default") {
+    const { cache: _ignored, ...rest } = i;
+    return nativeFetch(input, rest as RequestInit);
   }
   return nativeFetch(input, init);
 };

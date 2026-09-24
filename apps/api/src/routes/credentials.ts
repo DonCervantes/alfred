@@ -12,7 +12,7 @@ import { Hono } from "hono";
 import { isSession, requireSession } from "../lib/auth";
 import { getEncryptedBlob, putEncryptedBlob } from "../lib/blobs";
 import {
-  decryptAesGcm,
+  decryptAesGcmWithFallback,
   encryptAesGcm,
   sha256Bytes,
   sha256Hex,
@@ -45,6 +45,7 @@ import { canIssue } from "../lib/org";
 type Bindings = {
   SESSION_SECRET?: string;
   CREDENTIAL_ENCRYPTION_KEY?: string;
+  CREDENTIAL_ENCRYPTION_KEY_PREV?: string;
   STELLAR_NETWORK?: string;
   STELLAR_VC_VAULT_FACTORY?: string;
   STELLAR_USDC_SAC?: string;
@@ -226,7 +227,11 @@ credentialsRoutes.get("/:vcId", async (c) => {
         row.r2_key,
       );
       if (blob) {
-        const json = await decryptAesGcm(blob, key);
+        const json = await decryptAesGcmWithFallback(
+          blob,
+          key,
+          c.env.CREDENTIAL_ENCRYPTION_KEY_PREV,
+        );
         claims = JSON.parse(json) as unknown;
       }
     } catch {

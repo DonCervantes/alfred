@@ -8,11 +8,13 @@ import {
   SESSION_COOKIE,
   sessionCookieValue,
   sessionExpiryUnix,
+  shouldRefreshSession,
   signSession,
   verifySession,
 } from "../lib/session";
 import {
   createSessionRow,
+  extendSessionExpiry,
   getUserById,
   getValidSession,
   revokeSession,
@@ -150,6 +152,22 @@ authRoutes.get("/me", async (c) => {
   const user = await getUserById(db, payload.uid);
   if (!user) {
     return c.json({ ok: false, code: "USER_NOT_FOUND" }, 401);
+  }
+
+  // ALF-100: sliding refresh — extend cookie + D1 row when near expiry
+  if (shouldRefreshSession(payload)) {
+    const exp = sessionExpiryUnix();
+    const expiresAtIso = new Date(exp * 1000)
+      .toISOString()
+      .replace(/\.\d{3}Z$/, "");
+    await extendSessionExpiry(db, payload.sid, expiresAtIso);
+    const token = await signSession(secret, {
+      sid: payload.sid,
+      uid: payload.uid,
+      addr: payload.addr,
+      exp,
+    });
+    c.header("Set-Cookie", sessionCookieValue(token));
   }
 
   return c.json({

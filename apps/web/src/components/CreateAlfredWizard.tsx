@@ -1,6 +1,6 @@
-import { usePollar } from "@pollar/react";
 import { useState } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
+import { useAlfredPollar } from "../providers/pollar-hooks";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8787";
 const HORIZON = "https://horizon-testnet.stellar.org";
@@ -31,7 +31,7 @@ async function spendableXlm(address: string): Promise<number> {
 
 export function CreateAlfredWizard({ onDone, walletAddress }: Props) {
   const { tr } = useLocale();
-  const { signAndSubmitTx } = usePollar();
+  const { signAndSubmitTx } = useAlfredPollar();
   const [step, setStep] = useState<"idle" | "did" | "vault" | "done">("idle");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);

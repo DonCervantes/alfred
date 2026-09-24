@@ -1,7 +1,7 @@
 import { CREDENTIAL_TEMPLATES } from "@alfred/shared";
-import { usePollar } from "@pollar/react";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
+import { useAlfredPollar } from "../providers/pollar-hooks";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8787";
 
@@ -52,7 +52,7 @@ async function submitXdr(
 
 export function IssuerDashboard() {
   const { tr, locale } = useLocale();
-  const { signAndSubmitTx } = usePollar();
+  const { signAndSubmitTx } = useAlfredPollar();
   const [creds, setCreds] = useState<IssuedCred[]>([]);
   const [audit, setAudit] = useState<AuditEvent[]>([]);
   const [loading, setLoading] = useState(true);

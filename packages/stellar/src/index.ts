@@ -30,7 +30,7 @@ export {
   type DidKey,
   type DidRecord,
   type DidService,
-} from "./did-registry/src/index.ts";
+} from "./did-registry/src/index";
 
 export {
   Client as VcVaultClient,
@@ -39,11 +39,11 @@ export {
   IssuanceMode,
   type VcRecord,
   type IssueArgs,
-} from "./vc-vault/src/index.ts";
+} from "./vc-vault/src/index";
 
 export {
   Client as VcVaultFactoryClient,
   networks as vcVaultFactoryNetworks,
   FactoryError,
   type FeeConfig,
-} from "./vc-vault-factory/src/index.ts";
+} from "./vc-vault-factory/src/index";

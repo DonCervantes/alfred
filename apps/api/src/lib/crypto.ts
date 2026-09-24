@@ -60,6 +60,22 @@ export async function decryptAesGcm(
   return new TextDecoder().decode(plain);
 }
 
+/**
+ * Decrypt with current key, then optional previous key (ALF-102 rotation window).
+ */
+export async function decryptAesGcmWithFallback(
+  packed: Uint8Array,
+  currentKey: string,
+  previousKey?: string | null,
+): Promise<string> {
+  try {
+    return await decryptAesGcm(packed, currentKey);
+  } catch (first) {
+    if (!previousKey?.trim()) throw first;
+    return decryptAesGcm(packed, previousKey);
+  }
+}
+
 export async function sha256Hex(utf8: string): Promise<string> {
   const dig = await crypto.subtle.digest(
     "SHA-256",

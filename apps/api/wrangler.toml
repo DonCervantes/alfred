@@ -16,8 +16,8 @@ database_name = "alfred-db"
 database_id = "18211217-bbe1-42e3-aaa2-6bdbc110e74e"
 migrations_dir = "migrations"
 
-# R2 (optional): enable in Dashboard → R2 → Purchase, create `alfred-vc-blobs`, then uncomment.
-# Until then ALF-034 stores AES-GCM ciphertext in D1 `credential_blobs`.
+# Blobs: D1 `credential_blobs` (AES-GCM). R2 not enabled — no CF R2 purchase for testnet.
+# Optional VC_BLOBS path exists in lib/blobs.ts for a later scale-up; leave commented.
 # [[r2_buckets]]
 # binding = "VC_BLOBS"
 # bucket_name = "alfred-vc-blobs"

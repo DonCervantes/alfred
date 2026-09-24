@@ -56,7 +56,7 @@ Allow Soroban methods:
 | Contract | Methods |
 |----------|---------|
 | DID registry `CCLOO56U…` | `register` |
-| Vault factory `CAMHSVE…` | `deploy`, `collect_issue_fee` (si fee > 0) |
+| Vault factory `CAMHSVE…` | `deploy`, `collect_issue_fee` (fee **off** until Pollar USDC trustlines) |
 | Vault instances `C…` | `issue`, `revoke` |
 | USDC SAC (si fee > 0) | transfer vía `collect_issue_fee` |
 
@@ -77,7 +77,7 @@ Funding: **Deferred**. Friendbot is Worker fallback for activate on testnet.
 | `HOLDER_NO_VAULT` | Holder never ran Create ALFRED | Holder completes wizard |
 | Verify 404 / expired | Token TTL (~72h) | Re-share from vault |
 | Rate limit 429 | Abuse or shared IP | Wait window; raise limits only if needed |
-| Claims decrypt error | Wrong/missing `CREDENTIAL_ENCRYPTION_KEY` | Restore secret; **do not** rotate mid-flight without migration |
+| Claims decrypt error | Wrong/missing `CREDENTIAL_ENCRYPTION_KEY` | Restore secret; use `CREDENTIAL_ENCRYPTION_KEY_PREV` during rotation (ALF-102) |
 
 ---
 
@@ -88,8 +88,8 @@ Funding: **Deferred**. Friendbot is Worker fallback for activate on testnet.
 1. **Rotate immediately** in Pollar / CF secrets.  
 2. Redeploy Worker so new bindings apply.  
 3. If session secret rotated → all users re-login.  
-4. If encryption key rotated → **old blobs unreadable** unless you keep old key for decrypt migration (not built yet) → treat as data loss for ciphertext.  
-5. Note time + surface (chat, screenshot, git) in this file’s appendix or a private log — **do not** paste the secret.
+4. If encryption key rotated → follow **§6.5 Key rotation** (keep previous key briefly).  
+5. Note time + surface (chat, screenshot, git) in a private log — **do not** paste the secret.
 
 ### 6.2 Suspected account takeover
 
@@ -109,6 +109,26 @@ Funding: **Deferred**. Friendbot is Worker fallback for activate on testnet.
 - Optionally tighten Auth Policy to empty methods (stops sponsored txs).  
 - Leave verify read-only if chain+D1 still consistent — or take Pages down entirely.
 
+### 6.5 Encryption key rotation (ALF-102)
+
+Worker secrets:
+
+| Secret | Role |
+|--------|------|
+| `CREDENTIAL_ENCRYPTION_KEY` | **Current** — used to encrypt new issues |
+| `CREDENTIAL_ENCRYPTION_KEY_PREV` | **Previous** — decrypt-only fallback |
+
+Procedure:
+
+1. Generate new 32-byte key (hex 64 chars or base64).  
+2. Set `CREDENTIAL_ENCRYPTION_KEY_PREV` = **today’s** current key.  
+3. Set `CREDENTIAL_ENCRYPTION_KEY` = **new** key.  
+4. Redeploy Worker.  
+5. New issues encrypt with new key; old blobs still decrypt via PREV.  
+6. After a quiet period (or after optional re-encrypt job — not built yet), clear `CREDENTIAL_ENCRYPTION_KEY_PREV`.  
+
+Never delete the only key while ciphertext still depends on it.
+
 ---
 
 ## 7. Dogfood operator duties (ALF-053)
@@ -127,8 +147,19 @@ Invite copy: section 4 of `DOGFOOD.md`.
 - [ ] Friendbot / free activate paths off  
 - [ ] Auth Policy reviewed + least privilege  
 - [ ] Multisig or hardware for admin  
-- [ ] Encryption key rotation plan  
+- [ ] Encryption key rotation plan ([runbook §6.5](./OPERATOR-RUNBOOK.md))  
 - [ ] External security review  
 - [ ] Privacy Policy + Terms published  
+- [ ] Full list: [`MAINNET-CHECKLIST.md`](./MAINNET-CHECKLIST.md)  
 
 Until then: **testnet only** in all public copy.
+
+---
+
+## 9. Blob storage (D1)
+
+Encrypted VC payloads use AES-GCM via [`apps/api/src/lib/blobs.ts`](../apps/api/src/lib/blobs.ts) and live in D1 table `credential_blobs`.
+
+**Decision (testnet):** stay on D1 — do **not** enable/pay for Cloudflare R2. Fine for dogfood volume.
+
+`lib/blobs.ts` still has an optional `VC_BLOBS` (R2) branch for a future mainnet scale-up; binding stays commented in `wrangler.toml` and is out of scope until then.

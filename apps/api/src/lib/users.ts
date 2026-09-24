@@ -121,6 +121,19 @@ export async function revokeSession(
     .run();
 }
 
+export async function extendSessionExpiry(
+  db: D1Database,
+  sessionId: string,
+  expiresAtIso: string,
+): Promise<void> {
+  await db
+    .prepare(
+      `UPDATE sessions SET expires_at = ? WHERE id = ? AND revoked_at IS NULL`,
+    )
+    .bind(expiresAtIso, sessionId)
+    .run();
+}
+
 export async function getValidSession(
   db: D1Database,
   sessionId: string,

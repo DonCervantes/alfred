@@ -54,6 +54,9 @@ if ($Amount -eq 0) {
     --amount 0 `
     --recipient null
 } else {
+  # Stellar CLI 27 strips bare quotes around Address; use \"...\" so JSON string survives.
+  $tokenArg = '\"' + $UsdcSac + '\"'
+  $recipientArg = '\"' + $Recipient + '\"'
   Write-Host "==> set_fee"
   stellar contract invoke `
     --id $FactoryId `
@@ -61,9 +64,9 @@ if ($Amount -eq 0) {
     --network $Network `
     -- `
     set_fee `
-    --token $UsdcSac `
+    --token $tokenArg `
     --amount $Amount `
-    --recipient $Recipient
+    --recipient $recipientArg
 }
 
 Write-Host "==> quote_issue_fee"

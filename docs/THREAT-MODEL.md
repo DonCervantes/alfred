@@ -44,9 +44,9 @@
 
 | ID | Threat | Impact | Control today | Residual / gap |
 |----|--------|--------|---------------|----------------|
-| T1 | Session cookie theft (XSS / shared device) | Account takeover | HttpOnly cookie, HMAC (`SESSION_SECRET`), CSP on API | 14d TTL is long; no rotation on privilege change |
+| T1 | Session cookie theft (XSS / shared device) | Account takeover | HttpOnly cookie, HMAC (`SESSION_SECRET`), CSP on API; TTL 7d + sliding refresh | No rotation on privilege change |
 | T2 | CSRF against cookie session | Unwanted issue/revoke | SameSite default + JSON APIs; Pages/API split origins | Confirm CORS allowlist stays tight |
-| T3 | VC payload breach (D1 dump) | Claim disclosure | AES-256-GCM with `CREDENTIAL_ENCRYPTION_KEY` | Single key; no per-user KEK yet; R2 not used |
+| T3 | VC payload breach (D1 dump) | Claim disclosure | AES-256-GCM with `CREDENTIAL_ENCRYPTION_KEY`; ciphertext in D1 | Single key; no per-user KEK yet |
 | T4 | Guessable / leaked share token | Unauthorized claim view | Random token; TTL (~72h); status from chain | Anyone with link sees claims while valid |
 | T5 | Fake verify UI (phishing) | Social engineering | Canonical Pages domain; clear Valid/Revoked copy | No domain pinning / brand verification beyond URL |
 | T6 | Malicious issuer spam | Noise / reputational harm | Rate limits on prepare-issue; issuer = authenticated addr | No org allowlist (stretch ALF-062) |
@@ -54,7 +54,7 @@
 | T8 | Funding / Friendbot griefing | XLM / rate burn | Deferred funding + activate rate limit; Friendbot testnet-only | Mainnet must disable Friendbot path |
 | T9 | Deployer key compromise | Admin abuse on registry/factory | Single testnet key (`alfred-deployer`) | Need multisig / hardware before mainnet |
 | T10 | RPC / Workers SDK quirks | Failed txs, confusing UX | `cf-fetch-patch` for axios cache; health probes | Monitor worker logs on dogfood |
-| T11 | Rate-limit bypass | Abuse | Per-IP isolate Map (ALF-036) | Not durable across isolates; OK for dogfood only |
+| T11 | Rate-limit bypass | Abuse | Per-IP D1 buckets (ALF-101) + in-memory fallback | Soft GC; not a WAF |
 | T12 | Supply chain (deps / Pollar) | Key exfil / backdoor | Pin versions via pnpm lock; secrets never in git | No SBOM / automated audit yet |
 
 ---
@@ -62,9 +62,9 @@
 ## 4. Acceptable risk (testnet)
 
 - Friendbot as activate fallback.  
-- Ciphertext in D1 instead of R2.  
+- Ciphertext in D1 (R2 purchase out of scope for testnet).  
 - In-memory rate limits.  
-- Fee = 0 on factory.  
+- Fee = **0** on factory (0.1 USDC blocked dogfood: Pollar wallets missing USDC trustline).  
 - Single deployer admin.
 
 **Not acceptable on mainnet without fix:** Friendbot activate, long-lived single admin key, single encryption key without rotation plan, share links that always reveal full claims.
@@ -86,7 +86,8 @@ Response steps → [`OPERATOR-RUNBOOK.md`](./OPERATOR-RUNBOOK.md).
 ## 6. Next hardening (post dogfood)
 
 - Rotate Pollar secret if ever pasted in chat (see POLLAR-SETUP).  
-- Shorter session TTL or sliding refresh.  
-- Durable rate limit (KV / DO).  
-- R2 + key rotation story.  
-- Mainnet checklist: Auth Policy audit, no Friendbot, multisig admin, external review.
+- ~~Shorter session TTL / sliding refresh~~ → **ALF-100 Done** (7d + refresh on `/me`).  
+- ~~Durable rate limit~~ → **ALF-101 Done** (D1 buckets).  
+- ~~Key rotation story~~ → **ALF-102 Done** (`CREDENTIAL_ENCRYPTION_KEY_PREV`).  
+- Mainnet checklist: [`MAINNET-CHECKLIST.md`](./MAINNET-CHECKLIST.md) (**ALF-103**).  
+- (Later / mainnet scale) optional object storage if D1 size becomes a limit.

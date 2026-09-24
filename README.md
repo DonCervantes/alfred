@@ -18,6 +18,7 @@ Login: Pollar (Google / social) → optional **Activar billetera** (Deferred fun
 Setup notes: [`docs/CLOUDFLARE-SETUP.md`](docs/CLOUDFLARE-SETUP.md) · [`docs/POLLAR-SETUP.md`](docs/POLLAR-SETUP.md)  
 **Dogfood (ALF-053):** [`docs/DOGFOOD.md`](docs/DOGFOOD.md)  
 **Security (ALF-052):** [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) · [`docs/OPERATOR-RUNBOOK.md`](docs/OPERATOR-RUNBOOK.md)  
+**Mainnet gate (ALF-103):** [`docs/MAINNET-CHECKLIST.md`](docs/MAINNET-CHECKLIST.md)  
 **GitBook (ALF-005):** https://odyssey-15.gitbook.io/alfred-docs/ · [`docs/gitbook/`](docs/gitbook/)
 
 ---
@@ -78,7 +79,7 @@ Admin-only ops (via Lab or CLI, signed as `alfred-deployer`):
 | Vault factory | `set_fee` / `set_vault_wasm_hash` / `propose_admin` / `quote_issue_fee` |
 | Per-holder vault | Owner: `set_issuance_mode` / `allow_issuer` / `deny_issuer` |
 
-Issue fee is **off** by default (`quote_issue_fee = 0`). Turn on with `.\contracts\scripts\set-usdc-fee.ps1`.
+Issue fee is **off** on testnet (`quote_issue_fee = 0`). Pollar G-accounts often lack a USDC trustline, so a live fee breaks issue. Re-enable with `.\contracts\scripts\set-usdc-fee.ps1` only after wallets have USDC.
 
 ---
 

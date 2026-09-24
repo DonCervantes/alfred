@@ -22,7 +22,7 @@ Permite firmas Soroban para:
 | Contract | Methods |
 |----------|---------|
 | `alfred-did-registry` (`CCLOO56U…`) | `register` |
-| `alfred-vc-vault-factory` (`CAMHSVE…`) | `deploy`, `collect_issue_fee` (si fee > 0) |
+| `alfred-vc-vault-factory` (`CAMHSVE…`) | `deploy`, `collect_issue_fee` (fee **off** = 0; Pollar wallets suelen no tener trustline USDC) |
 | `alfred-vc-vault` (cada vault C…) | `issue`, `revoke` |
 | USDC SAC (si fee > 0) | transfer vía collect |
 
@@ -98,7 +98,7 @@ Explorers:
 | `Account not found` al crear ALFRED | Auth Policy / fondeo / cache axios (ya parcheado) | Refondear; revisar Auth Policy |
 | Pollar `SOROBAN_AUTH` / `NOT_ALLOWED` | Falta método en Auth Policy | Añadir `register` / `deploy` / `issue` / `revoke` |
 | `HOLDER_NO_VAULT` al emitir a otro | El holder no hizo “Crear mi ALFRED” | Que complete onboarding primero |
-| Fee USDC / transfer fail | Fee on-chain > 0 sin USDC/trustline | Dejar fee=0 en dogfood; o fondear USDC testnet |
+| Fee USDC / `trustline entry is missing` | Fee > 0 y la G-account Pollar no tiene trustline USDC | Dejar fee=0 (`set-usdc-fee.ps1 -Amount 0`) — default dogfood. Solo reactivar fee si Pollar añade trustline+USDC al fondear |
 | Verify link 404/410 | Token mal / expiró (72h default) | Re-compartir |
 | Sesión no pega (Pages) | Cookie / CORS / API URL | Confirmar `VITE_API_URL` = workers.dev en el build de Pages |
 

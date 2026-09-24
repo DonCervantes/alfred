@@ -18,6 +18,7 @@ type Bindings = {
   POLLAR_SECRET_KEY?: string;
   SESSION_SECRET?: string;
   CREDENTIAL_ENCRYPTION_KEY?: string;
+  CREDENTIAL_ENCRYPTION_KEY_PREV?: string;
   DB?: D1Database;
   VC_BLOBS?: R2Bucket;
 };
@@ -31,7 +32,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 app.use("*", async (c, next) => {
   const path = new URL(c.req.url).pathname;
   if (path.startsWith("/api/")) {
-    const rl = checkRateLimit(c.req.raw, path);
+    const rl = await checkRateLimit(c.req.raw, path, c.env.DB);
     c.header("X-RateLimit-Remaining", String(rl.remaining));
     c.header("X-RateLimit-Reset", String(Math.ceil(rl.resetAt / 1000)));
     if (!rl.ok) {

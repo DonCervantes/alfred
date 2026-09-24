@@ -2,7 +2,7 @@
 
 import { Hono } from "hono";
 import { getEncryptedBlob } from "../lib/blobs";
-import { decryptAesGcm } from "../lib/crypto";
+import { decryptAesGcmWithFallback } from "../lib/crypto";
 import {
   getCredentialByVcId,
   getPresentationLink,
@@ -12,6 +12,7 @@ import { getUserById } from "../lib/users";
 
 type Bindings = {
   CREDENTIAL_ENCRYPTION_KEY?: string;
+  CREDENTIAL_ENCRYPTION_KEY_PREV?: string;
   DB?: D1Database;
   VC_BLOBS?: R2Bucket;
 };
@@ -59,7 +60,13 @@ verifyRoutes.get("/:token", async (c) => {
         meta.r2_key,
       );
       if (blob) {
-        payload = JSON.parse(await decryptAesGcm(blob, encKey)) as unknown;
+        payload = JSON.parse(
+          await decryptAesGcmWithFallback(
+            blob,
+            encKey,
+            c.env.CREDENTIAL_ENCRYPTION_KEY_PREV,
+          ),
+        ) as unknown;
       }
     } catch {
       payload = null;

@@ -3,11 +3,12 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useState,
   type ReactNode,
 } from "react";
 import { usePollar as usePollarSdk } from "@pollar/react";
 
-/** Minimal surface HomePage needs from Pollar. */
+/** Minimal surface HomePage / vault need from Pollar. */
 export type AlfredPollarApi = {
   isAuthenticated: boolean;
   verified: boolean;
@@ -15,6 +16,7 @@ export type AlfredPollarApi = {
   login: (opts: { provider: "google" | "github" }) => void;
   logout: () => void;
   refreshWalletBalance: () => Promise<void>;
+  signAndSubmitTx: (xdr: string) => Promise<unknown>;
 };
 
 const AlfredPollarContext = createContext<AlfredPollarApi | null>(null);
@@ -23,19 +25,32 @@ export function isE2eMock(): boolean {
   return import.meta.env.VITE_E2E_MOCK === "1";
 }
 
-const e2eStub: AlfredPollarApi = {
-  isAuthenticated: false,
-  verified: false,
-  wallet: null,
-  login: () => {
-    /* smoke: no OAuth */
-  },
-  logout: () => {},
-  refreshWalletBalance: async () => {},
-};
+const E2E_WALLET = "GTESTE2EWALLET000000000000000000000000000000000000000";
 
 export function E2ePollarProvider({ children }: { children: ReactNode }) {
-  const value = useMemo(() => e2eStub, []);
+  const [signedIn, setSignedIn] = useState(false);
+
+  const login = useCallback((_opts: { provider: "google" | "github" }) => {
+    setSignedIn(true);
+  }, []);
+
+  const logout = useCallback(() => {
+    setSignedIn(false);
+  }, []);
+
+  const value = useMemo<AlfredPollarApi>(
+    () => ({
+      isAuthenticated: signedIn,
+      verified: signedIn,
+      wallet: signedIn ? { address: E2E_WALLET } : null,
+      login,
+      logout,
+      refreshWalletBalance: async () => {},
+      signAndSubmitTx: async () => ({ status: "success", hash: "e2e-mock" }),
+    }),
+    [signedIn, login, logout],
+  );
+
   return (
     <AlfredPollarContext.Provider value={value}>
       {children}
@@ -63,6 +78,7 @@ export function LivePollarBridge({ children }: { children: ReactNode }) {
       login,
       logout,
       refreshWalletBalance,
+      signAndSubmitTx: (xdr: string) => p.signAndSubmitTx(xdr),
     }),
     [
       p.isAuthenticated,
@@ -71,6 +87,7 @@ export function LivePollarBridge({ children }: { children: ReactNode }) {
       login,
       logout,
       refreshWalletBalance,
+      p.signAndSubmitTx,
     ],
   );
   return (
@@ -80,7 +97,6 @@ export function LivePollarBridge({ children }: { children: ReactNode }) {
   );
 }
 
-/** Prefer this over `@pollar/react` so Playwright can stub auth. */
 export function useAlfredPollar(): AlfredPollarApi {
   const ctx = useContext(AlfredPollarContext);
   if (!ctx) {
