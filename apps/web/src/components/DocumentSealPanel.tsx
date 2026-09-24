@@ -13,7 +13,7 @@ type Props = {
   onHashReady?: (hash: string, fileName: string) => void;
 };
 
-/** ALF-080–082: client hash + optional verify against a known commitment. */
+/** ALF-080–082 / ALF-110: client hash + optional verify against a known commitment. */
 export function DocumentSealPanel({ onHashReady }: Props) {
   const { tr } = useLocale();
   const [hash, setHash] = useState<string | null>(null);
@@ -21,19 +21,28 @@ export function DocumentSealPanel({ onHashReady }: Props) {
   const [expected, setExpected] = useState("");
   const [match, setMatch] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
+  const [applied, setApplied] = useState(false);
 
   async function onFile(file: File | null) {
     if (!file) return;
     setBusy(true);
     setMatch(null);
+    setApplied(false);
     try {
       const h = await sha256Hex(file);
       setHash(h);
       setFileName(file.name);
       onHashReady?.(h, file.name);
+      setApplied(true);
     } finally {
       setBusy(false);
     }
+  }
+
+  function applyToIssue() {
+    if (!hash) return;
+    onHashReady?.(hash, fileName ?? "file");
+    setApplied(true);
   }
 
   function verify() {
@@ -73,9 +82,22 @@ export function DocumentSealPanel({ onHashReady }: Props) {
           <p className="mt-1 break-all font-mono text-[11px] text-[var(--text)]">
             {hash}
           </p>
-          <p className="mt-2 text-xs text-[var(--text-secondary)]">
-            {tr("seal.issueHint")}
-          </p>
+          <button
+            type="button"
+            onClick={applyToIssue}
+            className="mt-3 w-full rounded-[var(--radius)] border border-black/10 bg-white py-2.5 text-sm font-medium text-[var(--text)] hover:bg-black/[0.03]"
+          >
+            {tr("seal.applyToIssue")}
+          </button>
+          {applied ? (
+            <p className="mt-2 text-xs text-[var(--success)]">
+              {tr("seal.applied")}
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-[var(--text-secondary)]">
+              {tr("seal.issueHint")}
+            </p>
+          )}
         </div>
       ) : null}
 

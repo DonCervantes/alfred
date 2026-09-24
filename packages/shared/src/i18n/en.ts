@@ -6,6 +6,7 @@ export const en = {
   "cta.signOut": "Sign out",
   "home.supporting":
     "Verifiable credentials, with the calm of a product you already understand.",
+  "nav.education": "Education",
   "auth.signedIn": "Signed in",
   "auth.wallet": "Your Stellar wallet",
   "auth.deferred":
@@ -93,6 +94,12 @@ export const en = {
   "vault.revoke": "Revoke",
   "vault.shareReady": "Link ready",
   "vault.error": "Could not complete the operation.",
+  "vault.errorTrustline":
+    "Your wallet needs a USDC trustline (and balance) before paid issuance. Fee is off on dogfood — retry issue.",
+  "vault.errorFee":
+    "USDC fee collection failed. Issuance fee may be enabled without a trustline — ask the operator to set fee to 0.",
+  "vault.errorAccount":
+    "Stellar account not found or unfunded. Activate / top up your wallet and try again.",
   "vault.pollarAuthPolicy":
     "Pollar blocked signing. In Treasury → Auth Policy allow alfred-vc-vault.issue / .revoke and factory.collect_issue_fee (when USDC fee is on).",
   "issuer.title": "Issuer history",
@@ -155,7 +162,9 @@ export const en = {
   "seal.file": "File",
   "seal.hashing": "Hashing…",
   "seal.issueHint":
-    "Copy the hash into the documentHash field when issuing a credential.",
+    "Hash is filled into Issue → documentHash when you pick a file (or tap Apply).",
+  "seal.applyToIssue": "Use hash in Issue",
+  "seal.applied": "Filled into Issue → documentHash.",
   "seal.expected": "Expected documentHash",
   "seal.verify": "Verify hash",
   "seal.match": "Hashes match.",

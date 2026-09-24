@@ -1,6 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("education vertical", () => {
+  test("home header links to education landing", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Educación" }).click();
+    await expect(page).toHaveURL(/\/edu$/);
+    await expect(
+      page.getByRole("heading", { name: /Credenciales de estudio/i }),
+    ).toBeVisible();
+  });
+
   test("landing shows CTA to app", async ({ page }) => {
     await page.goto("/edu");
 

@@ -91,6 +91,12 @@ export const CREDENTIAL_TEMPLATES: readonly CredentialTemplate[] = [
         required: false,
         input: "date",
       },
+      {
+        key: "documentHash",
+        labelKey: "vault.tpl.field.documentHash",
+        required: false,
+        input: "text",
+      },
     ],
   },
 ] as const;

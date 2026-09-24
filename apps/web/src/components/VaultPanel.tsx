@@ -3,6 +3,7 @@ import {
   getDefaultTemplate,
   getTemplateById,
   type CredentialTemplate,
+  type MessageKey,
 } from "@alfred/shared";
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "../i18n/LocaleProvider";
@@ -20,7 +21,37 @@ type Cred = {
 
 type Props = {
   selfAddress: string;
+  /** Prefill documentHash claim (from DocumentSealPanel). */
+  documentHashSeed?: string | null;
 };
+
+function humanizeChainError(
+  raw: string,
+  tr: (key: MessageKey) => string,
+): string {
+  const msg = raw || "";
+  const lower = msg.toLowerCase();
+  if (msg.includes("SOROBAN_AUTH") || msg.includes("NOT_ALLOWED")) {
+    return tr("vault.pollarAuthPolicy");
+  }
+  if (
+    lower.includes("trustline") ||
+    lower.includes("trustline entry is missing")
+  ) {
+    return tr("vault.errorTrustline");
+  }
+  if (
+    lower.includes("collect_issue_fee") ||
+    (lower.includes("transfer") && lower.includes("1000000"))
+  ) {
+    return tr("vault.errorFee");
+  }
+  if (lower.includes("account not found") || lower.includes("op_no_account")) {
+    return tr("vault.errorAccount");
+  }
+  return msg || tr("vault.error");
+}
+
 
 async function submitXdr(
   signAndSubmitTx: (xdr: string) => Promise<unknown>,
@@ -51,7 +82,7 @@ function emptyClaims(template: CredentialTemplate): Record<string, string> {
   return next;
 }
 
-export function VaultPanel({ selfAddress }: Props) {
+export function VaultPanel({ selfAddress, documentHashSeed }: Props) {
   const { tr } = useLocale();
   const { signAndSubmitTx } = useAlfredPollar();
   const [creds, setCreds] = useState<Cred[]>([]);
@@ -77,6 +108,19 @@ export function VaultPanel({ selfAddress }: Props) {
     getTemplateById(templateId) ??
     templates.find((t) => t.id === templateId) ??
     getDefaultTemplate();
+
+  useEffect(() => {
+    if (!documentHashSeed) return;
+    setTemplateId((id) => {
+      const tpl = getTemplateById(id);
+      if (!tpl?.fields.some((f) => f.key === "documentHash")) return "alfred";
+      return id;
+    });
+    setClaimValues((prev) => ({
+      ...prev,
+      documentHash: documentHashSeed,
+    }));
+  }, [documentHashSeed]);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -228,11 +272,7 @@ export function VaultPanel({ selfAddress }: Props) {
       await refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      setError(
-        msg.includes("SOROBAN_AUTH") || msg.includes("NOT_ALLOWED")
-          ? tr("vault.pollarAuthPolicy")
-          : msg || tr("vault.error"),
-      );
+      setError(humanizeChainError(msg, tr));
     } finally {
       setStatusHint(null);
       setBusy(false);
@@ -273,7 +313,7 @@ export function VaultPanel({ selfAddress }: Props) {
       await refresh();
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      setError(msg || tr("vault.error"));
+      setError(humanizeChainError(msg, tr));
     } finally {
       setBusy(false);
     }

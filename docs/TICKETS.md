@@ -170,6 +170,18 @@ Responde `docs/WHAT-WE-NEED.md` / las preguntas del chat antes de desbloquear ti
 
 ---
 
+## Epic 9 — Product polish (testnet)
+
+> UX gaps post-dogfood: seal → issue, vertical discoverability, errores legibles.
+
+| ID | Título | P | Status | Depends |
+|----|--------|---|--------|---------|
+| **ALF-110** | Seal → Issue: rellenar claim `documentHash` al hashear | P1 | Done | ALF-081 |
+| **ALF-111** | Link `/edu` en home (marketing + app) | P1 | Done | ALF-074 |
+| **ALF-112** | Errores Soroban legibles (trustline / fee / auth) | P1 | Done | ALF-043 |
+
+---
+
 ## Orden de ataque recomendado (Sprint 0 → 1)
 
 ```

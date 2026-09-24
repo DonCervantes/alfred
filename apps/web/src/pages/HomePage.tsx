@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 import { useLocale } from "../i18n/LocaleProvider";
 import { SignInSheet } from "../components/SignInSheet";
 import { CreateAlfredWizard } from "../components/CreateAlfredWizard";
@@ -62,6 +63,7 @@ function HomeWithPollar() {
   const [activateError, setActivateError] = useState<string | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
   const [profile, setProfile] = useState<AlfredProfile | null>(null);
+  const [documentHashSeed, setDocumentHashSeed] = useState<string | null>(null);
 
   async function refreshProfile() {
     try {
@@ -329,8 +331,13 @@ function HomeWithPollar() {
             profile.vaultAddress &&
             wallet?.address ? (
               <>
-                <VaultPanel selfAddress={wallet.address} />
-                <DocumentSealPanel />
+                <VaultPanel
+                  selfAddress={wallet.address}
+                  documentHashSeed={documentHashSeed}
+                />
+                <DocumentSealPanel
+                  onHashReady={(hash) => setDocumentHashSeed(hash)}
+                />
                 <IssuerDashboard />
                 <OrgMembersPanel selfAddress={wallet.address} />
               </>
@@ -396,6 +403,7 @@ function Shell({
   setLocale: (locale: "en" | "es") => void;
   marketing?: boolean;
 }) {
+  const { tr } = useLocale();
   return (
     <main className="relative min-h-screen overflow-hidden">
       <div
@@ -422,33 +430,41 @@ function Shell({
           />
           <span>ALFRED</span>
         </a>
-        <div
-          className="flex items-center gap-1"
-          role="group"
-          aria-label="Language"
-        >
-          <button
-            type="button"
-            onClick={() => setLocale("es")}
-            className={`rounded-full px-3 py-1 text-sm transition ${
-              locale === "es"
-                ? "bg-[var(--text)] text-white"
-                : "text-[var(--text-secondary)] hover:text-[var(--text)]"
-            }`}
+        <div className="flex items-center gap-3">
+          <Link
+            to="/edu"
+            className="text-sm text-[var(--text-secondary)] underline-offset-4 hover:text-[var(--text)] hover:underline"
           >
-            ES
-          </button>
-          <button
-            type="button"
-            onClick={() => setLocale("en")}
-            className={`rounded-full px-3 py-1 text-sm transition ${
-              locale === "en"
-                ? "bg-[var(--text)] text-white"
-                : "text-[var(--text-secondary)] hover:text-[var(--text)]"
-            }`}
+            {tr("nav.education")}
+          </Link>
+          <div
+            className="flex items-center gap-1"
+            role="group"
+            aria-label="Language"
           >
-            EN
-          </button>
+            <button
+              type="button"
+              onClick={() => setLocale("es")}
+              className={`rounded-full px-3 py-1 text-sm transition ${
+                locale === "es"
+                  ? "bg-[var(--text)] text-white"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text)]"
+              }`}
+            >
+              ES
+            </button>
+            <button
+              type="button"
+              onClick={() => setLocale("en")}
+              className={`rounded-full px-3 py-1 text-sm transition ${
+                locale === "en"
+                  ? "bg-[var(--text)] text-white"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text)]"
+              }`}
+            >
+              EN
+            </button>
+          </div>
         </div>
       </header>
 

@@ -6,6 +6,7 @@ export const es = {
   "cta.signOut": "Cerrar sesión",
   "home.supporting":
     "Credenciales verificables, con la calma de un producto que sí entiendes.",
+  "nav.education": "Educación",
   "auth.signedIn": "Sesión iniciada",
   "auth.wallet": "Tu billetera Stellar",
   "auth.deferred":
@@ -94,6 +95,12 @@ export const es = {
   "vault.revoke": "Revocar",
   "vault.shareReady": "Enlace listo",
   "vault.error": "No se pudo completar la operación.",
+  "vault.errorTrustline":
+    "Tu billetera necesita trustline USDC (y saldo) para emisión de pago. En dogfood el fee está en 0 — reintenta emitir.",
+  "vault.errorFee":
+    "Falló el cobro USDC. El fee puede estar activo sin trustline — pide al operador poner fee en 0.",
+  "vault.errorAccount":
+    "Cuenta Stellar no encontrada o sin fondos. Activa / fondea la billetera e intenta de nuevo.",
   "vault.pollarAuthPolicy":
     "Pollar rechazó la firma. En Treasury → Auth Policy permite alfred-vc-vault.issue / .revoke y factory.collect_issue_fee (si el fee USDC está activo).",
   "issuer.title": "Historial de emisor",
@@ -156,7 +163,9 @@ export const es = {
   "seal.file": "Archivo",
   "seal.hashing": "Calculando hash…",
   "seal.issueHint":
-    "Copia el hash al campo documentHash al emitir la credencial.",
+    "El hash se pone en Emitir → documentHash al elegir el archivo (o al pulsar Usar).",
+  "seal.applyToIssue": "Usar hash en Emitir",
+  "seal.applied": "Rellenado en Emitir → documentHash.",
   "seal.expected": "documentHash esperado",
   "seal.verify": "Verificar hash",
   "seal.match": "Los hashes coinciden.",
